@@ -26,8 +26,6 @@
 #ifndef __TRC104_H
 #define __TRC104_H
 
-#include <stdint.h>
-
 /* TRC104 registers */
 #define TRC104_MODECHCTRL  0x00 /* T/R Mode and Channel Frequency Control */
 #define TRC104_PWRXTALCTRL 0x01 /* Transmitter Power and Crystal Frequency Control */

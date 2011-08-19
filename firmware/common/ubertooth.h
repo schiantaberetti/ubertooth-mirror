@@ -61,6 +61,44 @@
 #define PIN_PAEN   (1 << 7 ) /* P2.7 */
 #define PIN_HGM    (1 << 8 ) /* P2.8 */
 #endif
+#ifdef BROCCOLI
+#define PIN_LED1     (1 << 11) /* P0.11 aka TXLED */
+#define PIN_LED2     (1 << 10) /* P0.10 */
+#define PIN_LED3     (1 << 1 ) /* P0.1 */
+#define PIN_LED4     (1 << 0 ) /* P0.0 */
+#define PIN_LED5     (1 << 29) /* P1.29 */
+#define PIN_LED6     (1 << 28) /* P1.28 */
+#define PIN_LED7     (1 << 26) /* P1.26 aka LED7 */
+#define PIN_LED8     (1 << 25) /* P1.25 */
+#define PIN_LED9     (1 << 24) /* P1.24 */
+#define PIN_LED10    (1 << 23) /* P1.23 */
+#define PIN_LED11    (1 << 22) /* P1.22 */
+#define PIN_LED12    (1 << 20) /* P1.20 */
+#define PIN_LED13    (1 << 19) /* P1.19 aka USRLED */
+#define PIN_USRLED   (1 << 19) /* P1.19 aka LED13 */
+#define PIN_RXLED    (1 << 26) /* P1.26 aka LED7 */
+#define PIN_TXLED    (1 << 11) /* P0.11 aka LED1 */
+#define PIN_VBUS     (1 << 30) /* P1.30 */
+#define PIN_DIGITAL2 (1 << 0 ) /* P2.0 */
+#define PIN_DIGITAL3 (1 << 1 ) /* P2.1 */
+#define PIN_DIGITAL4 (1 << 2 ) /* P2.2 */
+#define PIN_DIGITAL5 (1 << 3 ) /* P2.3 */
+#define PIN_DIGITAL6 (1 << 4 ) /* P2.4 */
+#define PIN_DIGITAL7 (1 << 5 ) /* P2.5 */
+#define PIN_DIGITAL8 (1 << 6 ) /* P2.6 */
+#define PIN_DIGITAL9 (1 << 7 ) /* P2.7 */
+#define PIN_SW1      (1 << 8 ) /* P2.8 */
+#define PIN_ANALOG2  (1 << 31) /* P1.31 */
+#define PIN_ANALOG3  (1 << 25) /* P0.25 aka RSSIA */
+#define PIN_ANALOG4  (1 << 26) /* P0.26 */
+#define PIN_PMODE    (1 << 9 ) /* P1.9 */
+#define PIN_CS       (1 << 10) /* P1.10 */
+#define PIN_MODE     (1 << 29) /* P4.29 */
+#define PIN_RSSID    (1 << 15) /* P1.15 */
+#define PIN_INT      (1 << 14) /* P1.14 */
+#define PIN_RSSIA    (1 << 25) /* P0.25 aka ANALONG3 */
+#define PIN_SSEL1    (1 << 28) /* P4.28 */
+#endif
 
 /* indicator LED control */
 #ifdef UBERTOOTH_ZERO
@@ -85,21 +123,73 @@
 #define TXLED_SET  (FIO1SET = PIN_TXLED)
 #define TXLED_CLR  (FIO1CLR = PIN_TXLED)
 #endif
+#ifdef BROCCOLI
+#define USRLED     (FIO1PIN & PIN_USRLED)
+#define USRLED_SET (FIO1SET = PIN_USRLED)
+#define USRLED_CLR (FIO1CLR = PIN_USRLED)
+#define RXLED      (FIO1PIN & PIN_RXLED)
+#define RXLED_SET  (FIO1SET = PIN_RXLED)
+#define RXLED_CLR  (FIO1CLR = PIN_RXLED)
+#define TXLED      (FIO0PIN & PIN_TXLED)
+#define TXLED_SET  (FIO0SET = PIN_TXLED)
+#define TXLED_CLR  (FIO0CLR = PIN_TXLED)
+#define LED1       (FIO0PIN & PIN_LED1)
+#define LED1_SET   (FIO0SET = PIN_LED1)
+#define LED1_CLR   (FIO0CLR = PIN_LED1)
+#define LED2       (FIO0PIN & PIN_LED2)
+#define LED2_SET   (FIO0SET = PIN_LED2)
+#define LED2_CLR   (FIO0CLR = PIN_LED2)
+#define LED3       (FIO0PIN & PIN_LED3)
+#define LED3_SET   (FIO0SET = PIN_LED3)
+#define LED3_CLR   (FIO0CLR = PIN_LED3)
+#define LED4       (FIO0PIN & PIN_LED4)
+#define LED4_SET   (FIO0SET = PIN_LED4)
+#define LED4_CLR   (FIO0CLR = PIN_LED4)
+#define LED5       (FIO1PIN & PIN_LED5)
+#define LED5_SET   (FIO1SET = PIN_LED5)
+#define LED5_CLR   (FIO1CLR = PIN_LED5)
+#define LED6       (FIO1PIN & PIN_LED6)
+#define LED6_SET   (FIO1SET = PIN_LED6)
+#define LED6_CLR   (FIO1CLR = PIN_LED6)
+#define LED7       (FIO1PIN & PIN_LED7)
+#define LED7_SET   (FIO1SET = PIN_LED7)
+#define LED7_CLR   (FIO1CLR = PIN_LED7)
+#define LED8       (FIO1PIN & PIN_LED8)
+#define LED8_SET   (FIO1SET = PIN_LED8)
+#define LED8_CLR   (FIO1CLR = PIN_LED8)
+#define LED9       (FIO1PIN & PIN_LED9)
+#define LED9_SET   (FIO1SET = PIN_LED9)
+#define LED9_CLR   (FIO1CLR = PIN_LED9)
+#define LED10      (FIO1PIN & PIN_LED10)
+#define LED10_SET  (FIO1SET = PIN_LED10)
+#define LED10_CLR  (FIO1CLR = PIN_LED10)
+#define LED11      (FIO1PIN & PIN_LED11)
+#define LED11_SET  (FIO1SET = PIN_LED11)
+#define LED11_CLR  (FIO1CLR = PIN_LED11)
+#define LED12      (FIO1PIN & PIN_LED12)
+#define LED12_SET  (FIO1SET = PIN_LED12)
+#define LED12_CLR  (FIO1CLR = PIN_LED12)
+#define LED13      (FIO1PIN & PIN_LED13)
+#define LED13_SET  (FIO1SET = PIN_LED13)
+#define LED13_CLR  (FIO1CLR = PIN_LED13)
+#endif
 
 /* SSEL (SPI slave select) control for CC2400 DIO (un-buffered) serial */
 #ifdef UBERTOOTH_ZERO
 #define DIO_SSEL_SET  (FIO2SET = PIN_SSEL0)
 #define DIO_SSEL_CLR  (FIO2CLR = PIN_SSEL0)
 #endif
-#ifdef UBERTOOTH_ONE
+#if defined UBERTOOTH_ONE || defined BROCCOLI
 #define DIO_SSEL_SET  (FIO4SET = PIN_SSEL1)
 #define DIO_SSEL_CLR  (FIO4CLR = PIN_SSEL1)
 #endif
 
 /* 1V8 regulator control */
+#if defined UBERTOOTH_ZERO || defined UBERTOOTH_ONE
 #define CC1V8      (FIO1PIN & PIN_CC1V8)
 #define CC1V8_SET  (FIO1SET = PIN_CC1V8)
 #define CC1V8_CLR  (FIO1CLR = PIN_CC1V8)
+#endif
 
 /* CC2400 control */
 #ifdef UBERTOOTH_ZERO
@@ -141,6 +231,18 @@
 #define MISO       (FIO2PIN & PIN_MISO)
 #endif
 
+/* TRC104 control */
+#ifdef UBERTOOTH_ZERO
+#define PMODE_SET  (FIO1SET = PIN_PMODE)
+#define PMODE_CLR  (FIO1CLR = PIN_PMODE)
+#define CS_SET     (FIO1SET = PIN_CS)
+#define CS_CLR     (FIO1CLR = PIN_CS)
+#define MODE_SET   (FIO4SET = PIN_MODE)
+#define MODE_CLR   (FIO4CLR = PIN_MODE)
+#define RSSID      (FIO1PIN & PIN_RSSID)
+#define TRC104_INT (FIO1PIN & PIN_INT)
+#endif
+
 /*
  * DIO_SSP is the SSP assigned to the CC2400's secondary ("un-buffered") serial
  * interface
@@ -152,7 +254,7 @@
 #define DIO_SSP_DMACR SSP0DMACR
 #define DIO_SSP_SRC   (1 << 1) /* for DMACCxConfig register */
 #endif
-#ifdef UBERTOOTH_ONE
+#if defined UBERTOOTH_ONE || BROCCOLI
 #define DIO_SSP_CR0   SSP1CR0
 #define DIO_SSP_CR1   SSP1CR1
 #define DIO_SSP_DR    SSP1DR
