@@ -96,7 +96,7 @@
 #define PIN_MODE     (1 << 29) /* P4.29 */
 #define PIN_RSSID    (1 << 15) /* P1.15 */
 #define PIN_INT      (1 << 14) /* P1.14 */
-#define PIN_RSSIA    (1 << 25) /* P0.25 aka ANALONG3 */
+#define PIN_RSSIA    (1 << 25) /* P0.25 aka ANALOG3 */
 #define PIN_SSEL1    (1 << 28) /* P4.28 */
 #endif
 
@@ -174,6 +174,11 @@
 #define LED13_CLR  (FIO1CLR = PIN_LED13)
 #endif
 
+/* SW1 button press */
+#ifdef BROCCOLI
+#define SW1 (!(FIO2PIN & PIN_SW1))
+#endif
+
 /* SSEL (SPI slave select) control for CC2400 DIO (un-buffered) serial */
 #ifdef UBERTOOTH_ZERO
 #define DIO_SSEL_SET  (FIO2SET = PIN_SSEL0)
@@ -232,7 +237,7 @@
 #endif
 
 /* TRC104 control */
-#ifdef UBERTOOTH_ZERO
+#ifdef BROCCOLI
 #define PMODE_SET  (FIO1SET = PIN_PMODE)
 #define PMODE_CLR  (FIO1CLR = PIN_PMODE)
 #define CS_SET     (FIO1SET = PIN_CS)
@@ -300,6 +305,7 @@ void gpio_init(void);
 void ubertooth_init(void);
 void dio_ssp_init(void);
 void atest_init(void);
+void trc104_init(void);
 void cc2400_init(void);
 u32 cc2400_spi(u8 len, u32 data);
 u16 cc2400_get(u8 reg);

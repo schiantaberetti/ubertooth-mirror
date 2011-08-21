@@ -161,6 +161,25 @@ void atest_init()
 	PINMODE1 &= ~((0x5 << 18)); // no pull-up/pull-down
 }
 
+#ifdef BROCCOLI
+/* start up the TRC104 into standby mode */
+void trc104_init() {
+	/* enter sleep mode */
+	PMODE_CLR;
+	MODE_SET;
+	wait(1); //FIXME only need to wait 100ms
+
+	/* enter stop mode */
+	CS_CLR;
+	MODE_CLR;
+	wait(1); //FIXME only need to wait 120ms
+
+	/* enter standby mode */
+	PMODE_SET;
+	wait(1); //FIXME only need to wait 1.5ms
+}
+#endif
+
 #if defined UBERTOOTH_ZERO || defined UBERTOOTH_ONE
 void cc2400_init()
 {
