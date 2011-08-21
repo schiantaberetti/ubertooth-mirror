@@ -68,6 +68,18 @@ void gpio_init()
 	/* set P2.9 as USB_CONNECT */
 	PINSEL4 = (PINSEL4 & ~(3 << 18)) | (1 << 18);
 #endif
+#ifdef BROCCOLI
+	FIO0DIR = (PIN_LED1 | PIN_LED2 | PIN_LED3 | PIN_LED4);
+	FIO1DIR = (PIN_LED5 | PIN_LED6 | PIN_LED7 | PIN_LED8 | PIN_LED9 |
+			PIN_LED10 | PIN_LED11 | PIN_LED12 | PIN_LED13 |
+			PIN_PMODE | PIN_CS);
+	FIO2DIR = 0;
+	FIO3DIR = 0;
+	FIO4DIR = (PIN_MODE | PIN_SSEL1);
+
+	/* set P2.9 as USB_CONNECT */
+	PINSEL4 = (PINSEL4 & ~(3 << 18)) | (1 << 18);
+#endif
 
 	/* set all outputs low */
 	FIO0PIN = 0;
@@ -84,8 +96,10 @@ void gpio_init()
 void ubertooth_init()
 {
 	gpio_init();
+#if defined UBERTOOTH_ZERO || defined UBERTOOTH_ONE
 	cc2400_init();
 	clock_start();
+#endif
 }
 
 /* configure SSP for CC2400's secondary serial data interface */
@@ -147,6 +161,7 @@ void atest_init()
 	PINMODE1 &= ~((0x5 << 18)); // no pull-up/pull-down
 }
 
+#if defined UBERTOOTH_ZERO || defined UBERTOOTH_ONE
 void cc2400_init()
 {
 	atest_init();
@@ -346,7 +361,7 @@ void clock_start()
 	PLL1FEED_SEQUENCE;
 	while (!(PLL1STAT & PLL1STAT_PLLC1_STAT));
 }
-
+#endif
 
 /* reset the LPC17xx, the cc2400 will be handled by the boot code */
 void reset()

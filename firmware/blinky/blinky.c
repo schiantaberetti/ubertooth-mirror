@@ -26,6 +26,7 @@ int main()
 	gpio_init();
 
 	while (1) {
+#if defined UBERTOOTH_ZERO || defined UBERTOOTH_ONE
 		USRLED_SET;
 		TXLED_SET;
 		RXLED_SET;
@@ -34,5 +35,36 @@ int main()
 		TXLED_CLR;
 		RXLED_CLR;
 		wait(1);
+#endif
+#ifdef BROCCOLI
+		LED1_SET;
+		LED2_SET;
+		LED3_SET;
+		LED4_SET;
+		LED5_SET;
+		LED6_SET;
+		LED7_SET;
+		LED8_SET;
+		LED9_SET;
+		LED10_SET;
+		LED11_SET;
+		LED12_SET;
+		LED13_SET;
+		wait(1);
+		LED1_CLR;
+		LED2_CLR;
+		LED3_CLR;
+		LED4_CLR;
+		LED5_CLR;
+		LED6_CLR;
+		LED7_CLR;
+		LED8_CLR;
+		LED9_CLR;
+		LED10_CLR;
+		LED11_CLR;
+		LED12_CLR;
+		LED13_CLR;
+		wait(1);
+#endif
 	}
 }
