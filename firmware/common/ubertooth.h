@@ -24,7 +24,13 @@
 
 #include "lpc17.h"
 #include "types.h"
+
+#if defined UBERTOOTH_ZERO || defined UBERTOOTH_ONE
 #include "cc2400.h"
+#endif
+#ifdef BROCCOLI
+#include "trc104.h"
+#endif
 
 /* GPIO pins */
 #ifdef UBERTOOTH_ZERO
@@ -98,6 +104,8 @@
 #define PIN_INT      (1 << 14) /* P1.14 */
 #define PIN_RSSIA    (1 << 25) /* P0.25 aka ANALOG3 */
 #define PIN_SSEL1    (1 << 28) /* P4.28 */
+#define PIN_SCLK     (1 << 7 ) /* P0.7  */
+#define PIN_SDAT     (1 << 8 ) /* P0.8 (also connected to P0.9) */
 #endif
 
 /* indicator LED control */
@@ -246,6 +254,12 @@
 #define MODE_CLR   (FIO4CLR = PIN_MODE)
 #define RSSID      (FIO1PIN & PIN_RSSID)
 #define TRC104_INT (FIO1PIN & PIN_INT)
+#define SDAT       (FIO0PIN & PIN_SDAT)
+#define SDAT_SET   (FIO0SET = PIN_SDAT)
+#define SDAT_CLR   (FIO0CLR = PIN_SDAT)
+#define SCLK       (FIO0PIN & PIN_SCLK)
+#define SCLK_SET   (FIO0SET = PIN_SCLK)
+#define SCLK_CLR   (FIO0CLR = PIN_SCLK)
 #endif
 
 /*
@@ -306,6 +320,8 @@ void ubertooth_init(void);
 void dio_ssp_init(void);
 void atest_init(void);
 void trc104_init(void);
+void trc104_write_register(uint8_t address, uint8_t data);
+uint8_t trc104_read_register(uint8_t address);
 void cc2400_init(void);
 u32 cc2400_spi(u8 len, u32 data);
 u16 cc2400_get(u8 reg);

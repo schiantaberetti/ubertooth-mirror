@@ -28,6 +28,19 @@ void wait(u8 seconds)
 	while (--i);
 }
 
+/* delay a number of milliseconds while on internal oscillator (4 MHz) */
+void waitms(u8 ms)
+{
+	u32 i = 400 * ms;
+	while (--i);
+}
+
+static void spi_delay()
+{
+	u32 i = 10;
+	while (--i);
+}
+
 /*
  * This should be called very early by every firmware in order to ensure safe
  * operating conditions for the CC2400.
@@ -77,6 +90,15 @@ void gpio_init()
 	FIO3DIR = 0;
 	FIO4DIR = (PIN_MODE | PIN_SSEL1);
 
+	/* INT, RRSID pull-down */
+	PINMODE2 &= ~(0x3 << 28); //clear P1.14 (INT) pull-up/pull-down setting
+	PINMODE2 |= (0x3 << 28); //P1.14 (INT) pull-down
+	PINMODE2 &= ~(0x3 << 30); //clear P1.15 (RSSID) pull-up/pull-down setting
+	PINMODE2 |= (0x3 << 30); //P1.15 (RSSID) pull-down
+	/* RSSIA floating */
+	PINMODE1 &= ~(0x3 << 18); //clear P0.25 (RSSIA) pull-up/pull-down setting
+	PINMODE1 |= (0x2 << 18); //P0.25 (RSSIA) floating
+
 	/* set P2.9 as USB_CONNECT */
 	PINSEL4 = (PINSEL4 & ~(3 << 18)) | (1 << 18);
 #endif
@@ -99,6 +121,10 @@ void ubertooth_init()
 #if defined UBERTOOTH_ZERO || defined UBERTOOTH_ONE
 	cc2400_init();
 	clock_start();
+#endif
+#ifdef BROCCOLI
+	trc104_init();
+	//FIXME clock
 #endif
 }
 
@@ -163,20 +189,123 @@ void atest_init()
 
 #ifdef BROCCOLI
 /* start up the TRC104 into standby mode */
-void trc104_init() {
+void trc104_init()
+{
 	/* enter sleep mode */
-	PMODE_CLR;
-	MODE_SET;
-	wait(1); //FIXME only need to wait 100ms
-
-	/* enter stop mode */
 	CS_CLR;
 	MODE_CLR;
-	wait(1); //FIXME only need to wait 120ms
+	PMODE_CLR;
+	waitms(3);
+	MODE_SET;
+	//FIXME durations should be the same when mcu is on crystal oscillator
+	waitms(150);
 
-	/* enter standby mode */
+	/* enter stop mode */
+	MODE_CLR;
+	waitms(180);
+
+	/* enter standby mode (activiates oscillator) */
 	PMODE_SET;
-	wait(1); //FIXME only need to wait 1.5ms
+	waitms(180);
+}
+
+void trc104_write_register(uint8_t address, uint8_t data)
+{
+	int len = 8;
+	uint8_t msb = 1 << (len - 1);
+
+	/* set r/w bit to write */
+	address |= 0x80;
+
+	FIO0DIR |= PIN_SCLK; // set as output
+	FIO0DIR |= PIN_SDAT; // set as output
+
+	SCLK_CLR;
+
+	/* start transaction by raising CS */
+	CS_SET;
+	spi_delay();
+
+	while (len--) {
+		if (address & msb)
+			SDAT_SET;
+		else
+			SDAT_CLR;
+		address <<= 1;
+		spi_delay();
+		SCLK_SET;
+		spi_delay();
+		SCLK_CLR;
+	}
+
+	len = 8;
+	while (len--) {
+		if (data & msb)
+			SDAT_SET;
+		else
+			SDAT_CLR;
+		data <<= 1;
+		spi_delay();
+		SCLK_SET;
+		spi_delay();
+		SCLK_CLR;
+	}
+
+	spi_delay();
+
+	/* end transaction by dropping CS */
+	CS_CLR;
+}
+
+uint8_t trc104_read_register(uint8_t address)
+{
+	uint8_t data = 0;
+	int len = 8;
+	uint8_t msb = 1 << (len - 1);
+
+	/* set r/w bit to read */
+	address &= 0x7f;
+
+	FIO0DIR |= PIN_SCLK; // set as output
+	FIO0DIR |= PIN_SDAT; // set as output
+
+	SCLK_CLR;
+
+	/* start transaction by raising CS */
+	CS_SET;
+	spi_delay();
+
+	while (len--) {
+		if (address & msb)
+			SDAT_SET;
+		else
+			SDAT_CLR;
+		address <<= 1;
+		spi_delay();
+		SCLK_SET;
+		spi_delay();
+		SCLK_CLR;
+	}
+
+	SDAT_CLR;
+	FIO0DIR &= ~PIN_SDAT; // set as input
+	len = 8;
+	while (len--) {
+		data <<= 1;
+		spi_delay();
+		SCLK_SET;
+		if (SDAT)
+			data |= 1;
+		spi_delay();
+		SCLK_CLR;
+	}
+
+	spi_delay();
+
+	/* end transaction by dropping CS */
+	CS_CLR;
+
+	return data;
 }
 #endif
 
@@ -194,12 +323,6 @@ void cc2400_init()
 
 	/* activate 3V3 supply for CC2400 IO */
 	CC3V3_SET;
-}
-
-static void spi_delay()
-{
-	u32 i = 10;
-	while (--i);
 }
 
 /*
