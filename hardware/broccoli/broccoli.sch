@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Wed 24 Aug 2011 03:42:26 PM MDT
+EESchema Schematic File Version 2  date Wed 24 Aug 2011 04:00:09 PM MDT
 LIBS:ubertooth-symbols
 LIBS:power
 LIBS:device
@@ -1490,6 +1490,9 @@ U 1 1 4E4D600A
 P 4700 3250
 F 0 "U3" H 4700 3350 60  0000 C CNN
 F 1 "CC2400" H 4700 3150 60  0000 C CNN
+F 4 "Texas Instruments" H 4700 3250 60  0001 C CNN "Field1"
+F 5 "CC2400" H 4700 3250 60  0001 C CNN "Field2"
+F 6 "IC RF TXRX 2.4GHZ LP 48-QFN" H 4700 3250 60  0001 C CNN "Field3"
 	1    4700 3250
 	1    0    0    -1  
 $EndComp
