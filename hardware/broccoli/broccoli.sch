@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Wed 24 Aug 2011 03:38:46 PM MDT
+EESchema Schematic File Version 2  date Wed 24 Aug 2011 03:42:26 PM MDT
 LIBS:ubertooth-symbols
 LIBS:power
 LIBS:device
@@ -1022,7 +1022,7 @@ L LED D17
 U 1 1 4E545B23
 P 5800 7050
 F 0 "D17" H 5800 7150 50  0000 C CNN
-F 1 "RSTLED" H 5800 6950 50  0000 C CNN
+F 1 "1V8LED" H 5800 6950 50  0000 C CNN
 F 2 "0603D" H 5800 7050 60  0001 C CNN
 F 4 "Kingbright" H 5800 7050 60  0001 C CNN "Field1"
 F 5 "APT1608SGC" H 5800 7050 60  0001 C CNN "Field2"
