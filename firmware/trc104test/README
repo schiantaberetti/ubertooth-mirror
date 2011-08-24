@@ -1,0 +1,11 @@
+trc104_test.c activates the TRC104 wireless transceiver and exercises the
+serial control interface to verify that the TRC104 responds with an expected
+default register value.
+
+On success LED1 through LED8 indicate the bits of the tested register and LED11
+flashes slowly.
+
+You probably want to set:
+	BOARD=BROCCOLI
+and perhaps:
+	LINKER_SCRIPT=LPC17xx_Linker_Script_without_bootloader.ld
