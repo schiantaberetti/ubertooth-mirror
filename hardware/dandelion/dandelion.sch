@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Sat 27 Aug 2011 03:46:44 PM MDT
+EESchema Schematic File Version 2  date Sat 27 Aug 2011 03:56:37 PM MDT
 LIBS:ubertooth-symbols
 LIBS:power
 LIBS:device
@@ -1067,6 +1067,7 @@ F 1 "NCP502" H 2250 8800 60  0000 C CNN
 F 4 "ON Semiconductor" H 2250 9050 60  0001 C CNN "Field1"
 F 5 "NCP502SQ35T2G" H 2250 9050 60  0001 C CNN "Field2"
 F 6 "IC REG VOLTAGE 180MA 3.5V SC70-6" H 2250 9050 60  0001 C CNN "Field3"
+F 7 "DIY" H 2250 9050 60  0001 C CNN "Field4"
 	1    2250 9050
 	1    0    0    -1  
 $EndComp
@@ -1693,7 +1694,7 @@ U 1 1 4E5449AD
 P 4150 9850
 F 0 "C15" H 4200 9950 50  0000 L CNN
 F 1 "100µF" H 4200 9750 50  0000 L CNN
-F 4 "Nichon" H 4150 9850 60  0001 C CNN "Field1"
+F 4 "Nichicon" H 4150 9850 60  0001 C CNN "Field1"
 F 5 "UUR1C101MCL1GS" H 4150 9850 60  0001 C CNN "Field2"
 F 6 "Aluminum Electrolytic Capacitors - SMD 16volts 100uF 20% 85C 8X6.2" H 4150 9850 60  0001 C CNN "Field3"
 F 7 "DNP" H 4150 9850 60  0001 C CNN "Field4"
