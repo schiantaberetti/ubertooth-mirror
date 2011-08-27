@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Sat 27 Aug 2011 03:56:37 PM MDT
+EESchema Schematic File Version 2  date Sat 27 Aug 2011 04:10:09 PM MDT
 LIBS:ubertooth-symbols
 LIBS:power
 LIBS:device
@@ -1080,6 +1080,7 @@ F 1 "DIODESCH" H 3650 9150 40  0000 C CNN
 F 4 "Fairchild" H 3650 9250 60  0001 C CNN "Field1"
 F 5 "RB521S30" H 3650 9250 60  0001 C CNN "Field2"
 F 6 "DIODE SCHOTTKY 30V 200MA SOD523F" H 3650 9250 60  0001 C CNN "Field3"
+F 7 "DIY" H 3650 9250 60  0001 C CNN "Field4"
 	1    3650 9250
 	0    1    1    0   
 $EndComp
