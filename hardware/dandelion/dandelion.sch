@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Sat 27 Aug 2011 04:10:09 PM MDT
+EESchema Schematic File Version 2  date Sat 27 Aug 2011 04:22:05 PM MDT
 LIBS:ubertooth-symbols
 LIBS:power
 LIBS:device
@@ -45,6 +45,18 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+$Comp
+L C C3
+U 1 1 4E596DF5
+P 12600 3100
+F 0 "C3" H 12650 3200 50  0000 L CNN
+F 1 "100nF" H 12650 3000 50  0000 L CNN
+F 4 "Murata" H 12600 3100 60  0001 C CNN "Field1"
+F 5 "GRM155R71C104KA88D" H 12600 3100 60  0001 C CNN "Field2"
+F 6 "Multilayer Ceramic Capacitors (MLCC) - SMD/SMT 0402 0.1uF 16volts X7R 10%" H 12600 3100 60  0001 C CNN "Field3"
+	1    12600 3100
+	-1   0    0    1   
+$EndComp
 NoConn ~ 11900 1100
 Connection ~ 12300 2300
 Wire Wire Line
@@ -1270,19 +1282,6 @@ P 12600 3400
 F 0 "#PWR08" H 12600 3400 30  0001 C CNN
 F 1 "GND" H 12600 3330 30  0001 C CNN
 	1    12600 3400
-	1    0    0    -1  
-$EndComp
-$Comp
-L C C3
-U 1 1 4E583A6B
-P 12600 3100
-F 0 "C3" H 12400 3200 50  0000 L CNN
-F 1 "100nF" H 12350 3000 50  0000 L CNN
-F 2 "0603" H 12600 3100 60  0001 C CNN
-F 4 "TDK" H 12600 3100 60  0001 C CNN "Field1"
-F 5 "C1608X7R1H104K" H 12600 3100 60  0001 C CNN "Field2"
-F 6 "Multilayer Ceramic Capacitors (MLCC) - SMD/SMT 0603 0.1uF 50volts X7R 10%" H 12600 3100 60  0001 C CNN "Field3"
-	1    12600 3100
 	1    0    0    -1  
 $EndComp
 $Comp
