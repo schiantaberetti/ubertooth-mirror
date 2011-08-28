@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Sat 27 Aug 2011 10:34:23 PM MDT
+EESchema Schematic File Version 2  date Sat 27 Aug 2011 11:30:37 PM MDT
 LIBS:ubertooth-symbols
 LIBS:power
 LIBS:device
@@ -45,7 +45,6 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-NoConn ~ 8950 5350
 Text Notes 11150 600  0    60   ~ 0
 P15 for programming U5 with Pogoprog or other TTL serial device
 Text Notes 10950 2950 0    60   ~ 0
@@ -2015,9 +2014,9 @@ U 1 1 4E485958
 P 11200 850
 F 0 "SW1" H 11350 960 50  0000 C CNN
 F 1 "SW_PUSH" H 11200 770 50  0000 C CNN
-F 4 "APEM Components" H 11200 850 60  0001 C CNN "Field1"
-F 5 "ADTSM62RVTR" H 11200 850 60  0001 C CNN "Field2"
-F 6 "SWITCH TACT SPST 12VDC 260GF" H 11200 850 60  0001 C CNN "Field3"
+F 4 "TE Connectivity" H 11200 850 60  0001 C CNN "Field1"
+F 5 "FSM2JSMA" H 11200 850 60  0001 C CNN "Field2"
+F 6 "SWITCH TACT 6MM SMD GULL WING" H 11200 850 60  0001 C CNN "Field3"
 	1    11200 850 
 	1    0    0    -1  
 $EndComp
