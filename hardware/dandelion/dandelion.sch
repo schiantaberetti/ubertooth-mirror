@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Sun 28 Aug 2011 11:17:45 AM MDT
+EESchema Schematic File Version 2  date Sun 28 Aug 2011 12:50:07 PM MDT
 LIBS:ubertooth-symbols
 LIBS:power
 LIBS:device
@@ -45,6 +45,8 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+NoConn ~ 3500 1950
+NoConn ~ 3600 1950
 Text Notes 11150 600  0    60   ~ 0
 P15 for programming U5 with Pogoprog or other TTL serial device
 Text Notes 10950 2950 0    60   ~ 0
@@ -236,8 +238,6 @@ Wire Wire Line
 	5100 4850 5100 4650
 Wire Wire Line
 	1350 6750 1450 6750
-Wire Wire Line
-	3600 1950 3600 1650
 Connection ~ 3300 7250
 Wire Wire Line
 	3200 7250 3300 7250
@@ -860,8 +860,6 @@ Wire Wire Line
 Wire Wire Line
 	1900 6950 2100 6950
 Connection ~ 2000 6950
-Wire Wire Line
-	3500 1950 3500 1650
 Wire Wire Line
 	1400 6550 1350 6550
 Wire Wire Line
@@ -1542,14 +1540,6 @@ Text Label 5300 2950 0    40   ~ 0
 SO
 Text Label 5300 2850 0    40   ~ 0
 GIO6
-Text Label 8800 9900 0    40   ~ 0
-ATEST1
-Text Label 8800 9800 0    40   ~ 0
-ATEST2
-Text Label 3600 1950 1    40   ~ 0
-ATEST2
-Text Label 3500 1950 1    40   ~ 0
-ATEST1
 $Comp
 L VCC #PWR020
 U 1 1 4E545B8C
