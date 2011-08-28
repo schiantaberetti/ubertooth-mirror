@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Sat 27 Aug 2011 04:22:05 PM MDT
+EESchema Schematic File Version 2  date Sat 27 Aug 2011 10:34:23 PM MDT
 LIBS:ubertooth-symbols
 LIBS:power
 LIBS:device
@@ -37,7 +37,7 @@ $Descr User 17000 11000
 encoding utf-8
 Sheet 1 1
 Title "Dandelion"
-Date "27 aug 2011"
+Date "28 aug 2011"
 Rev "$Rev$"
 Comp "Copyright 2010, 2011 Michael Ossmann"
 Comment1 "License: GPL v2, http://ubertooth.sourceforge.net/"
@@ -45,6 +45,11 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+NoConn ~ 8950 5350
+Text Notes 11150 600  0    60   ~ 0
+P15 for programming U5 with Pogoprog or other TTL serial device
+Text Notes 10950 2950 0    60   ~ 0
+P14 for programming or\ndebugging U5 with Renesas E8a
 $Comp
 L C C3
 U 1 1 4E596DF5
@@ -55,7 +60,7 @@ F 4 "Murata" H 12600 3100 60  0001 C CNN "Field1"
 F 5 "GRM155R71C104KA88D" H 12600 3100 60  0001 C CNN "Field2"
 F 6 "Multilayer Ceramic Capacitors (MLCC) - SMD/SMT 0402 0.1uF 16volts X7R 10%" H 12600 3100 60  0001 C CNN "Field3"
 	1    12600 3100
-	-1   0    0    1   
+	1    0    0    -1  
 $EndComp
 NoConn ~ 11900 1100
 Connection ~ 12300 2300
