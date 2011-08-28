@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Sat 27 Aug 2011 11:30:37 PM MDT
+EESchema Schematic File Version 2  date Sun 28 Aug 2011 11:17:45 AM MDT
 LIBS:ubertooth-symbols
 LIBS:power
 LIBS:device
@@ -1693,7 +1693,7 @@ F 1 "GND" H 4150 10080 30  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C C15
+L CP1 C15
 U 1 1 4E5449AD
 P 4150 9850
 F 0 "C15" H 4200 9950 50  0000 L CNN

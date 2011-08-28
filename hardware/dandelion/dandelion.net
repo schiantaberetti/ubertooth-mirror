@@ -1,4 +1,4 @@
-# EESchema Netlist Version 1.1 created  Sat 27 Aug 2011 10:37:27 PM MDT
+# EESchema Netlist Version 1.1 created  Sun 28 Aug 2011 11:17:55 AM MDT
 (
  ( /4E596DF5 $noname  C3 100nF {Lib=C}
   (    1 VCC )
@@ -148,7 +148,7 @@
   (    4 ? )
   (    5 +1.8V )
  )
- ( /4E5449AD $noname  C15 100µF {Lib=C}
+ ( /4E5449AD $noname  C15 100µF {Lib=CP1}
   (    1 VCC )
   (    2 GND )
  )
@@ -684,9 +684,8 @@ $component C11
  C1-1
 $endlist
 $component C15
+ CP*
  SM*
- C?
- C1-1
 $endlist
 $component C21
  SM*
