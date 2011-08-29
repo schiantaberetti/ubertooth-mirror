@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Mon 29 Aug 2011 02:44:30 PM MDT
+EESchema Schematic File Version 2  date Mon 29 Aug 2011 02:51:23 PM MDT
 LIBS:ubertooth-symbols
 LIBS:power
 LIBS:device
@@ -45,6 +45,8 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Text Notes 6250 3000 0    60   ~ 0
+U4: LPC1756 or better is recommended\nAny of the following should work:\nLPC1752, LPC1754, LPC1756, LPC1758, LPC1759
 $Comp
 L CONN_1 P18
 U 1 1 4E5BE6A6
@@ -2027,7 +2029,7 @@ F 0 "U4" H 9550 5750 60  0000 C CNN
 F 1 "LPC175X" H 9550 5550 60  0000 C CNN
 F 2 "LQFP80" H 9550 5650 60  0001 C CNN
 F 4 "NXP" H 9550 5650 60  0001 C CNN "Field1"
-F 5 "LPC1752FBD80,551" H 9550 5650 60  0001 C CNN "Field2"
+F 5 "LPC1756FBD80,551" H 9550 5650 60  0001 C CNN "Field2"
 F 6 "Microcontrollers (MCU) ARM Cortex M3 Micro Controller" H 9550 5650 60  0001 C CNN "Field3"
 F 7 "DIY" H 9550 5650 60  0001 C CNN "Field4"
 	1    9550 5650
