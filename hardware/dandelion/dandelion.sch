@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Sun 28 Aug 2011 04:47:55 PM MDT
+EESchema Schematic File Version 2  date Mon 29 Aug 2011 01:13:52 AM MDT
 LIBS:ubertooth-symbols
 LIBS:power
 LIBS:device
@@ -37,7 +37,7 @@ $Descr User 17000 11000
 encoding utf-8
 Sheet 1 1
 Title "Dandelion"
-Date "28 aug 2011"
+Date "29 aug 2011"
 Rev "$Rev$"
 Comp "Copyright 2010, 2011 Michael Ossmann"
 Comment1 "License: GPL v2, http://ubertooth.sourceforge.net/"
@@ -1790,7 +1790,7 @@ L C C12
 U 1 1 4E4DA879
 P 3700 5050
 F 0 "C12" H 3750 5150 50  0000 L CNN
-F 1 "68nF" H 3750 4950 50  0000 L CNN
+F 1 "68pF" H 3750 4950 50  0000 L CNN
 F 4 "Murata" H 3700 5050 60  0001 C CNN "Field1"
 F 5 "GRM1555C1H680JZ01D" H 3700 5050 60  0001 C CNN "Field2"
 F 6 "Multilayer Ceramic Capacitors (MLCC) - SMD/SMT 0402 68PF 50V 5%" H 3700 5050 60  0001 C CNN "Field3"
@@ -1880,7 +1880,7 @@ L C C18
 U 1 1 4E4DA62D
 P 5200 1850
 F 0 "C18" H 5250 1950 50  0000 L CNN
-F 1 "68nF" H 5250 1750 50  0000 L CNN
+F 1 "68pF" H 5250 1750 50  0000 L CNN
 F 4 "Murata" H 5200 1850 60  0001 C CNN "Field1"
 F 5 "GRM1555C1H680JZ01D" H 5200 1850 60  0001 C CNN "Field2"
 F 6 "Multilayer Ceramic Capacitors (MLCC) - SMD/SMT 0402 68PF 50V 5%" H 5200 1850 60  0001 C CNN "Field3"
@@ -1904,7 +1904,7 @@ L C C6
 U 1 1 4E4DA4EF
 P 2200 1850
 F 0 "C6" H 2250 1950 50  0000 L CNN
-F 1 "68nF" H 2250 1750 50  0000 L CNN
+F 1 "68pF" H 2250 1750 50  0000 L CNN
 F 4 "Murata" H 2200 1850 60  0001 C CNN "Field1"
 F 5 "GRM1555C1H680JZ01D" H 2200 1850 60  0001 C CNN "Field2"
 F 6 "Multilayer Ceramic Capacitors (MLCC) - SMD/SMT 0402 68PF 50V 5%" H 2200 1850 60  0001 C CNN "Field3"
