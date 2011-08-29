@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Sun 28 Aug 2011 12:50:07 PM MDT
+EESchema Schematic File Version 2  date Sun 28 Aug 2011 04:47:55 PM MDT
 LIBS:ubertooth-symbols
 LIBS:power
 LIBS:device
@@ -45,6 +45,9 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+NoConn ~ 9100 8150
+NoConn ~ 9200 8150
+NoConn ~ 10200 8150
 NoConn ~ 3500 1950
 NoConn ~ 3600 1950
 Text Notes 11150 600  0    60   ~ 0
@@ -433,18 +436,6 @@ Wire Wire Line
 Wire Wire Line
 	16350 5450 16250 5450
 Wire Wire Line
-	8900 9650 8900 9700
-Wire Wire Line
-	8900 9700 8800 9700
-Wire Wire Line
-	8800 10000 10200 10000
-Wire Wire Line
-	10200 10000 10200 8150
-Wire Wire Line
-	9100 8150 9100 9800
-Wire Wire Line
-	9100 9800 8800 9800
-Wire Wire Line
 	7650 2000 7750 2000
 Wire Wire Line
 	7750 2000 7750 2100
@@ -715,14 +706,6 @@ Wire Wire Line
 	7650 1100 7750 1100
 Wire Wire Line
 	7750 1100 7750 1050
-Wire Wire Line
-	9200 8150 9200 9900
-Wire Wire Line
-	9200 9900 8800 9900
-Wire Wire Line
-	8900 10200 8900 10100
-Wire Wire Line
-	8900 10100 8800 10100
 Wire Wire Line
 	15750 5450 15850 5450
 Connection ~ 3000 8950
@@ -1469,8 +1452,6 @@ Text Notes 1300 8550 0    60   ~ 0
 3V supply (VCC) switches between battery and\nUSB power depending on bus power availability
 Text Notes 6950 800  0    60   ~ 0
 digital expansion port
-Text Notes 7650 10300 0    60   ~ 0
-analog expansion port
 $Comp
 L 1V8 #PWR018
 U 1 1 4E5460A4
@@ -2539,34 +2520,6 @@ F 5 "LG N971-KN-1" H 16050 5450 60  0001 C CNN "Field2"
 F 6 "LED CHIPLED 570NM GREEN 1206 SMD" H 16050 5450 60  0001 C CNN "Field3"
 	1    16050 5450
 	1    0    0    -1  
-$EndComp
-$Comp
-L VCC #PWR057
-U 1 1 4E460BA7
-P 8900 9650
-F 0 "#PWR057" H 8900 9750 30  0001 C CNN
-F 1 "VCC" H 8900 9750 30  0000 C CNN
-	1    8900 9650
-	1    0    0    -1  
-$EndComp
-$Comp
-L GND #PWR058
-U 1 1 4E460B9D
-P 8900 10200
-F 0 "#PWR058" H 8900 10200 30  0001 C CNN
-F 1 "GND" H 8900 10130 30  0001 C CNN
-	1    8900 10200
-	1    0    0    -1  
-$EndComp
-$Comp
-L CONN_5 P5
-U 1 1 4E460B4D
-P 8400 9900
-F 0 "P5" V 8350 9900 50  0000 C CNN
-F 1 "ANALOG" V 8450 9900 50  0000 C CNN
-F 4 "DNP" V 8400 9900 60  0001 C CNN "Field4"
-	1    8400 9900
-	-1   0    0    1   
 $EndComp
 $Comp
 L VCC #PWR059
