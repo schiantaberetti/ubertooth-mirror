@@ -1,4 +1,4 @@
-PCBNEW-BOARD Version 1 date Mon 29 Aug 2011 12:31:10 PM MDT
+PCBNEW-BOARD Version 1 date Mon 29 Aug 2011 01:01:00 PM MDT
 
 # Created by Pcbnew(2011-06-30 BZR 3033)-stable
 
@@ -9,7 +9,7 @@ Ly 1FFF8001
 EnabledLayers 1FFF8001
 Links 283
 NoConn 0
-Di 6276 12339 50322 47661
+Di 6286 12339 50312 47661
 Ndraw 110
 Ntrack 1275
 Nzone 0
@@ -35,14 +35,14 @@ InternalUnit 0.000100 INCH
 Layers 2
 Layer[0] Back signal
 Layer[15] Front signal
-TrackWidth 80
+TrackWidth 70
 TrackWidthList 70
 TrackWidthList 100
 TrackWidthList 120
 TrackWidthList 160
 TrackWidthList 200
 TrackWidthList 500
-TrackClearence 80
+TrackClearence 70
 ZoneClearence 100
 TrackMinWidth 70
 DrawSegmWidth 20
@@ -58,7 +58,7 @@ MicroViaMinSize 200
 MicroViaMinDrill 50
 TextPcbWidth 80
 TextPcbSize 394 394
-EdgeModWidth 80
+EdgeModWidth 120
 TextModSize 394 394
 TextModWidth 80
 PadSize 472 886
@@ -456,8 +456,8 @@ $EndEQUIPOT
 $NCLASS
 Name "Default"
 Desc "This is the default net class."
-Clearance 80
-TrackWidth 80
+Clearance 70
+TrackWidth 70
 ViaDia 250
 ViaDrill 150
 uViaDia 200
@@ -559,6 +559,60 @@ AddNet "N-000128"
 AddNet "N-000129"
 AddNet "VCC"
 $EndNCLASS
+$MODULE PIN_ARRAY-4X1
+Po 24000 36000 0 15 4E5BE1D7 4E5A78EA ~~
+Li PIN_ARRAY-4X1
+Cd Connecteur 4 pins
+Kw CONN DEV
+Sc 4E5A78EA
+AR /4E582AE9
+Op 0 0 0
+T0 0 0 400 400 0 80 N V 21 N "P14"
+T1 0 0 400 350 0 80 N I 21 N "E8A"
+DS -1000 -500 -1000 500 120 21
+DS -2000 -500 -2000 500 120 21
+DS -2000 500 2000 500 120 21
+DS 2000 500 2000 -500 120 21
+DS 2000 -500 -2000 -500 120 21
+$PAD
+Sh "1" R 600 600 0 0 0
+Dr 400 0 0
+At STD N 00E0FFFF
+Ne 90 "N-000122"
+Po -1500 0
+Le 32
+$EndPAD
+$PAD
+Sh "2" C 600 600 0 0 0
+Dr 400 0 0
+At STD N 00E0FFFF
+Ne 95 "VCC"
+Po -500 0
+Le 42612098
+$EndPAD
+$PAD
+Sh "3" C 600 600 0 0 0
+Dr 400 0 0
+At STD N 00E0FFFF
+Ne 29 "N-000030"
+Po 500 0
+Le 80
+$EndPAD
+$PAD
+Sh "4" C 600 600 0 0 0
+Dr 400 0 0
+At STD N 00E0FFFF
+Ne 23 "GND"
+Po 1500 0
+Le 80
+$EndPAD
+$SHAPE3D
+Na "pin_array/pins_array_6x1.wrl"
+Sc 1.000000 1.000000 1.000000
+Of 0.000000 0.000000 0.000000
+Ro 0.000000 0.000000 0.000000
+$EndSHAPE3D
+$EndMODULE  PIN_ARRAY-4X1
 $MODULE testpad-50mil
 Po 32500 33000 0 15 4D86C7FE 4E4704EF ~~
 Li testpad-50mil
@@ -3730,56 +3784,6 @@ Po 0 0
 Le 8212
 $EndPAD
 $EndMODULE  testpad-50mil
-$MODULE SIL-4
-Po 24000 36000 0 15 00200000 4E5A78EA ~~
-Li SIL-4
-Cd Connecteur 4 pibs
-Kw CONN DEV
-Sc 4E5A78EA
-AR /4E582AE9
-Op 0 0 0
-T0 0 -1000 683 428 0 107 N V 21 N "P14"
-T1 0 -1000 600 400 0 100 N I 21 N "E8A"
-DS -2000 -500 -2000 -500 120 21
-DS -2000 500 -2000 -500 120 21
-DS -2000 -500 -2000 -500 120 21
-DS -2000 -500 2000 -500 120 21
-DS 2000 -500 2000 500 120 21
-DS 2000 500 -2000 500 120 21
-DS -1000 500 -1000 -500 120 21
-$PAD
-Sh "1" R 550 550 0 0 0
-Dr 320 0 0
-At STD N 00E0FFFF
-Ne 90 "N-000122"
-Po -1500 0
-Le 107
-$EndPAD
-$PAD
-Sh "2" C 550 550 0 0 0
-Dr 320 0 0
-At STD N 00E0FFFF
-Ne 95 "VCC"
-Po -500 0
-Le 95
-$EndPAD
-$PAD
-Sh "3" C 550 550 0 0 0
-Dr 320 0 0
-At STD N 00E0FFFF
-Ne 29 "N-000030"
-Po 500 0
-Le 5
-$EndPAD
-$PAD
-Sh "4" C 550 550 0 0 0
-Dr 320 0 0
-At STD N 00E0FFFF
-Ne 23 "GND"
-Po 1500 0
-Le 22
-$EndPAD
-$EndMODULE  SIL-4
 $MODULE QFN48
 Po 20500 29900 0 15 4D629ADD 4E5A78EB ~~
 Li QFN48

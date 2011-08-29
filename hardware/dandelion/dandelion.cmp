@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPCB (2011-06-30 BZR 3033)-stable date = Sun 28 Aug 2011 11:16:51 AM MDT
+Cmp-Mod V01 Created by CvPCB (2011-06-30 BZR 3033)-stable date = Mon 29 Aug 2011 12:58:28 PM MDT
 
 BeginCmp
 TimeStamp = /4E4697D7;
@@ -386,13 +386,6 @@ IdModule  = PIN_ARRAY_3X2;
 EndCmp
 
 BeginCmp
-TimeStamp = /4E460B4D;
-Reference = P5;
-ValeurCmp = ANALOG;
-IdModule  = PIN_ARRAY_5x1;
-EndCmp
-
-BeginCmp
 TimeStamp = /4D1F4F19;
 Reference = P6;
 ValeurCmp = VCC;
@@ -452,7 +445,7 @@ BeginCmp
 TimeStamp = /4E582AE9;
 Reference = P14;
 ValeurCmp = E8A;
-IdModule  = SIL-4;
+IdModule  = PIN_ARRAY-4X1;
 EndCmp
 
 BeginCmp
