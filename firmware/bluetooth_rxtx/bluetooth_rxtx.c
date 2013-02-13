@@ -301,7 +301,7 @@ void queue_init()
 	tail = 0;
 }
 
-static int enqueue(u8 *buf)
+int enqueue(u8 *buf)
 {
 	int i;
 	u8 h = head & 0x7F;

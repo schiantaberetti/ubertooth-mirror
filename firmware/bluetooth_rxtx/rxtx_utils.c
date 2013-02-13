@@ -1,4 +1,3 @@
-#include"bt_utils.h"
 #include"rxtx_utils.h"
 
 uint8_t usb_msg[DMA_SIZE];

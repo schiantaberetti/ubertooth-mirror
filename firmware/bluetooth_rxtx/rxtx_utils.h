@@ -1,10 +1,18 @@
 #ifndef __RXTX_UTILS_H__
 #define __RXTX_UTILS_H__ 1
+#include "ubertooth.h"
+#include "usbapi.h"
+#include "usbhw_lpc.h"
+#include "ubertooth_interface.h"
+#include "bluetooth.h"
+#include "bluetooth_le.h"
 
 #include"bt_utils.h"
-#include"rxtx_utils.h"
 
 //uint8_t usb_msg[DMA_SIZE];
+extern int enqueue(u8 *buf);
+extern volatile u16 channel;
+extern volatile u32 clkn;
 
 void send_usb_msg(char *msg);
 
