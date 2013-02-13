@@ -58,5 +58,6 @@ static const u8 ao_barker_correct[] = {
 void precalc();
 u16 next_hop(u32 clkn);
 int find_access_code(u8 *idle_rxbuf);
+u16 inquiry_scan_next_hop(u32 clock);
 
 #endif /* __BLUETOOTH_H */

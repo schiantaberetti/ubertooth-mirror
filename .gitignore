@@ -1,3 +1,5 @@
+# vim shit
+*.swp
 # host and firmware
 *.o
 *.so.*

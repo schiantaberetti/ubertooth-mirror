@@ -77,6 +77,7 @@ volatile u32 clkn;                       // clkn 3200 Hz counter
 #define HOP_BLUETOOTH 2
 #define HOP_BTLE      3
 #define HOP_DIRECT    4
+#define HOP_INQUIRY_SCAN    5
 
 #define CS_THRESHOLD_DEFAULT (uint8_t)(-120)
 #define CS_HOLD_TIME  2                     // min pkts to send on trig (>=1)
@@ -512,6 +513,12 @@ static BOOL usb_vendor_request_handler(TSetupPacket *pSetup, int *piLen, u8 **pp
 	usb_pkt_rx *p = NULL;
 
 	switch (pSetup->bRequest) {
+
+	case 100:
+		requested_mode = MODE_INQUIRY;
+		pbData[0] = 'R' & 0xFF; pbData[1] = '!' & 0xFF;  pbData[2] = '\0' & 0xFF;  
+		*piLen = 3;
+		break;
 
 	case UBERTOOTH_PING:
 		*piLen = 0;
@@ -1464,6 +1471,11 @@ void hop(void)
 		channel = next_hop(clkn);
 	}
 
+	else if (hop_mode == HOP_INQUIRY_SCAN) {
+		TXLED_SET;
+		channel = inquiry_scan_next_hop(clkn); 
+	}
+
 	else if (hop_mode == HOP_BTLE) {
 		TXLED_SET;
 		channel = btle_next_hop();
@@ -2304,6 +2316,98 @@ void led_specan()
 	mode = MODE_IDLE;
 }
 
+/*perform a bluetooth inquiry for the time of 'duration' seconds*/
+void inquiry_scan(u8 duration)
+{
+	hop_mode = HOP_INQUIRY_SCAN;	
+	u8 fhs_len = 37; //the FHS response packet has 7B of header and 30B of payload (considering FEC encoding)
+	u8 fhs_pkt[fhs_len]; 
+	u8 access_code[] = {0x54,0x75,0xc5,0x8c,0xc7,0x33,0x45,0xe7,0x2a}; //General Inquiry Access Code
+	forge_fhs_pkt(fhs_pkt,0,0x9E8B33,access_code); //UAP for the inquiry response pkt is DCI = 0x00
+
+	u8 rev_access_code[9],i;
+	for(i=0;i<9;i++)
+		rev_access_code[i] = reverse_byte(access_code[8-i]);
+	while(1)
+	{
+		if(do_hop)
+		{
+			hop();
+		}
+			send_baseband_pkt(rev_access_code,fhs_pkt,37);
+		handle_usb();
+	}
+/*		FOLLOWING	A MEMENTO
+	queue_init();
+	dio_ssp_init();
+	dma_init();
+	dio_ssp_start();
+	cc2400_rx();
+//	bt_cc2400_tx();
+	
+	cs_trigger_enable();		
+
+	hop_mode = HOP_INQUIRY_SCAN;	
+
+	u8 fhs_len = 37; //the FHS response packet has 7B of header and 30B of payload (considering FEC encoding)
+	u8 fhs_pkt[fhs_len]; 
+	u8 rx_buf[DMA_SIZE];
+	u8 access_code[] = {0x54,0x75,0xc5,0x8c,0xc7,0x33,0x45,0xe7,0x2a}; //General Inquiry Access Code
+	u8 rev_access_code[9];
+//	u64 syncword = 0x475c58cc73345e72;
+	u8 i,ac_err=0;
+	register u8 inq_found=0;
+
+
+	for(i=0;i<9;i++)
+		rev_access_code[i] = reverse_byte(access_code[8-i]);
+*******send me the address just modified, just for debug********
+	char str[17];
+	hex2str(&target.address,str,8);
+	//precalc() is done by SET_BD  //setup hopping sequence parameters 
+	send_usb_msg(str);
+	//while(queue_length()) handle_usb(); // send me the address, just for debug
+**************
+
+//	SET_BLUETOOTH_REG_CONF;
+
+	forge_fhs_pkt(fhs_pkt,0,0x9E8B33,access_code); //UAP for the inquiry response pkt is DCI = 0x00
+
+	while(requested_mode == MODE_INQUIRY)
+	{	
+		if(do_hop)
+		{
+			hop();
+			if (inq_found)
+			{		
+//				forge_fhs_pkt(fhs_pkt,0,0x9E8B33,access_code); //UAP for the inquiry response pkt is DCI = 0x00
+//				cc2400_txtest();
+				send_baseband_pkt(access_code,fhs_pkt,37);
+				send_usb_msg("Sent an FHS packet");
+				//while(queue_length()) handle_usb(); // just for debug
+				//cc2400_rx();
+	
+				inq_found = 0;
+			}
+		}
+		if (inq_found == 0 && capture_data(rx_buf))
+		{	
+			for (i=0,ac_err=0;i<9;i++)
+				ac_err+=count_asserted_bits((rx_buf[i])^(access_code[i]));
+
+			if (ac_err<=MAX_SYNCWORD_ERRS) 
+			{
+				//send_usb_msg("Eureka1");
+				inq_found = 1;
+				//send_usb_msg("Eureka2");
+			}
+
+		}
+		handle_usb();
+	}
+*/
+}
+
 int main()
 {
 	ubertooth_init();
@@ -2338,6 +2442,9 @@ int main()
 			led_specan();
 		else if (requested_mode == MODE_IDLE && mode != MODE_IDLE)
 			cc2400_idle();
+		else if (requested_mode == MODE_INQUIRY && mode != MODE_INQUIRY)
+			inquiry_scan(1);
+
 		//FIXME do other modes like this
 	}
 }

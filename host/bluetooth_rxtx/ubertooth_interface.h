@@ -99,6 +99,7 @@ enum operating_modes {
 	MODE_BT_FOLLOW_LE  = 9,
 	MODE_BT_PROMISC_LE = 10,
 	MODE_RESET         = 11,
+	MODE_INQUIRY         = 12,
 };
 
 enum usb_pkt_types {

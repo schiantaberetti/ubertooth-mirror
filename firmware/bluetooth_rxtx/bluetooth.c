@@ -187,3 +187,25 @@ int find_access_code(u8 *idle_rxbuf)
 	}
 	return -1;
 }
+u16 hopping_kernel(u8 x,u8 y1, u16 y2, u8 a,u8 b,u8 c,u16 d,u8 e,u32 f)
+{
+	u8 perm = perm5(
+		((x + a) % 32) ^ b,
+		(y1 * 0x1f) ^ c,
+		d);
+	/* hop selection */
+	return(2402 + bank[(perm + e + f + y2) % CHANNELS]);
+
+}
+u16 inquiry_scan_next_hop(u32 clock)
+/*This function sets the variable according to the table 2.2 of section 2.6.4, part B volume 2 of the bluetooth specification version 4. It returns the channel calculated by the hopping kernel.*/
+{
+	//REMEMBER TO CALL PRECALC() AT INIZIALIZATION!!!
+	u8 xir,x;
+	u8 N=0; //this is a counter increased after each FHS packet has been transmitted in response to the inquiry. TODO useful?
+
+	xir = (clock >> 12) & 0x1f;
+	xir = (xir+N)%32;
+	x = xir & 0x1f;// xir bits: 4,3,2,1,0
+	return hopping_kernel(x,0,0,a1,b,c1,d1,e,0);
+}
