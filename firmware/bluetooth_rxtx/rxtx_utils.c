@@ -1,38 +1,5 @@
 #include"rxtx_utils.h"
 
-uint8_t usb_msg[DMA_SIZE];
-
-void send_usb_msg(char *msg)
-{
-	int i=0;
-	while(i<DMA_SIZE && msg[i]!='\0')
-	{
-		usb_msg[i] = msg[i] & 0xFF;
-		i++;
-	}
-	if (i<DMA_SIZE)
-		usb_msg[i]='\0';
-	else
-		usb_msg[DMA_SIZE-1] = '\0';
-	enqueue(usb_msg);
-}
-void send_usb_value_msg(char *msg,u8 *data,u8 length)
-{
-	u8 i,j=0;
-	while(i<DMA_SIZE && msg[i]!='\0')
-	{
-		usb_msg[i] = msg[i] & 0xFF;
-		i++;
-	}
-	j=i;
-	while(j<DMA_SIZE && j<i+length)
-	{
-		usb_msg[j]=data[j-i] & 0xFF;
-		j++;
-	}
-	if (j<DMA_SIZE) usb_msg[j] = '\0';
-	enqueue(usb_msg);
-}
 void send_baseband_pkt(u8* access_code,u8* data,u16 data_len)
 /*send a stream of byte in the 'access_code' physical channel*/
 {

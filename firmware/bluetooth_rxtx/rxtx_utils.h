@@ -14,10 +14,6 @@ extern int enqueue(u8 *buf);
 extern volatile u16 channel;
 extern volatile u32 clkn;
 
-void send_usb_msg(char *msg);
-
-void send_usb_value_msg(char *msg,u8 *data,u8 length);
-
 void send_baseband_pkt(u8* access_code,u8* data,u16 data_len);
 /*send a stream of byte in the 'access_code' physical channel*/
 
