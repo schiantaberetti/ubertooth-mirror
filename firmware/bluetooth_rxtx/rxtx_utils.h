@@ -5,16 +5,13 @@
 #include "usbhw_lpc.h"
 #include "ubertooth_interface.h"
 #include "bluetooth.h"
-#include "bluetooth_le.h"
 
 #include"bt_utils.h"
 
-//uint8_t usb_msg[DMA_SIZE];
-extern int enqueue(u8 *buf);
-extern volatile u16 channel;
-extern volatile u32 clkn;
+extern u16 channel;
+extern u32 clkn;
 
-void send_baseband_pkt(u8* access_code,u8* data,u16 data_len);
+void bt_transmit(u8* access_code,u8* data,u16 data_len);
 /*send a stream of byte in the 'access_code' physical channel*/
 
 #define SET_BLUETOOTH_REG_CONF  cc2400_set(MANAND,  0x7fff); /*mega-reset of important signal values except VGA, see cc2400 datasheet, page 63*/ \
@@ -36,9 +33,6 @@ uint8_t count_asserted_bits(uint8_t n);
 
 u8 rcv_baseband_pkt(u8* expected_access_code, u8* data, u16 data_len);
 /*receive a stream of byte by radio and return 1 if the access_code matches, 0 otherwise*/
-
-void send_baseband_pkt_old(u8* access_code,u8* data,u16 data_len);
-/*send a stream of byte in the 'access_code' physical channel*/
 
 void forge_fhs_pkt(u8 *fhs,u8 uap,u64 bd_addr,u8 *access_code);
 /*syncword mush has been calculated on bd_addr. bd_addr is the address of this (ubertooth) device.*/

@@ -374,6 +374,7 @@ static int enqueue(u8 *buf)
 	f->pkt_type = BR_PACKET;
 	f->clkn_high = idle_buf_clkn_high;
 	f->clk100ns = idle_buf_clk100ns;
+
 	f->channel = idle_buf_channel - 2402;
 	f->rssi_min = rssi_min;
 	f->rssi_max = rssi_max;
@@ -2429,7 +2430,7 @@ void inquiry_scan(u8 duration)
 		if(do_hop)
 		{
 			//hop();
-			send_baseband_pkt(access_code,fhs_pkt,37);
+			bt_transmit(access_code,fhs_pkt,37);
 			send_usb_msg("FHS packet sent.");
 		}
 			handle_usb();

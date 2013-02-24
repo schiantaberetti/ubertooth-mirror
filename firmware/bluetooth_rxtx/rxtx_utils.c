@@ -1,16 +1,11 @@
 #include"rxtx_utils.h"
 
-void send_baseband_pkt(u8* access_code,u8* data,u16 data_len)
+void bt_transmit(u8* access_code,u8* data,u16 data_len)
 /*send a stream of byte in the 'access_code' physical channel*/
 {
-	u8 ac_buf[9];
 	u16 i;
 	u16 gio_save;
 	
-	for (i=0;i<9;i++)
-		//ac_buf[i] = reverse_byte(access_code[8-i]);
-		ac_buf[i] = access_code[i];
-
 	cc2400_set(MANAND, 0x7fff);
 	cc2400_set(LMTST, 0x2b22); // LNA and receive mixers test register
 	cc2400_set(MDMTST0, 0x134b); // no PRNG 	
@@ -28,9 +23,9 @@ void send_baseband_pkt(u8* access_code,u8* data,u16 data_len)
 	cc2400_set(INT, 0x0014);	// FIFO_THRESHOLD: 20 bytes 	
 
 	// using the synch byte to send the first access code byte
-	i = ac_buf[0];
+	i = access_code[0];
 	i <<= 8;
-	i |= ac_buf[0] & 0xff;
+	i |= access_code[0] & 0xff; // maybe useless?
 	cc2400_set(SYNCH,   i);
 
 		// set GIO to FIFO_FULL
@@ -49,7 +44,7 @@ void send_baseband_pkt(u8* access_code,u8* data,u16 data_len)
 
 	// put the remaining access code in the FIFO
 	while (GIO6); // wait for the FIFO to drain (FIFO_FULL false)
-	cc2400_spi_buf(FIFOREG, 8, ac_buf+1);
+	cc2400_spi_buf(FIFOREG, 8, access_code+1);
 
 	// put the packet data into the FIFO
   for (i=0;i<data_len;i+=16)
@@ -72,71 +67,6 @@ void send_baseband_pkt(u8* access_code,u8* data,u16 data_len)
 	cc2400_set(IOCFG, gio_save);
 
 }
-void send_baseband_pkt_orig(u8* access_code,u8* data,u16 data_len)
-/*send a stream of byte in the 'access_code' physical channel*/
-{
-	cc2400_set(MANAND,  0x7fff);
-	cc2400_set(GRMDM,   0x0801); 
-	cc2400_set(LMTST,   0x2b22);
-	cc2400_set(MDMTST0, 0x134b); // try 0x1b4b for inverted data (otherwise 0x134b)
-	cc2400_set(FSDIV,   channel);
-//	cc2400_set(SYNCH,   0xf9ae);	syncword, useless
-//	cc2400_set(SYNCL,   0x1584); syncword, useless
-	cc2400_set(FREND,  0xa);
-	cc2400_set(MDMCTRL, 0x0029);
-
-	while (!(cc2400_status() & XOSC16M_STABLE));
-	cc2400_strobe(SFSON);
-	while (!(cc2400_status() & FS_LOCK));
-	TXLED_SET;
-#ifdef UBERTOOTH_ONE
-	PAEN_SET;
-#endif
-
-	u16 j;
-
-
-	while ((cc2400_get(FSMSTATE) & 0x1f) != STATE_STROBE_FS_ON);
-	// transmit a packet
-	for (j = 0; j < 9; j++)
-		cc2400_set8(FIFOREG, access_code[j]);
-	for (j = 0; j < data_len; j++)
-		cc2400_set8(FIFOREG, data[j]);
-	cc2400_strobe(STX);
-	// sent packet, now look for repeated packet
-	while ((cc2400_get(FSMSTATE) & 0x1f) != STATE_STROBE_FS_ON);
-	TXLED_CLR;
-	cc2400_strobe(SRFOFF);
-	while ((cc2400_status() & FS_LOCK));
-
-#ifdef UBERTOOTH_ONE
-	PAEN_CLR;
-#endif
-/*
-
-	while (!(cc2400_status() & XOSC16M_STABLE));
-	cc2400_strobe(SFSON);
-	while (!(cc2400_status() & FS_LOCK));
-	TXLED_SET;
-	cc2400_strobe(STX);
-#ifdef UBERTOOTH_ONE
-	PAEN_SET;
-#endif*/
-}
-
-#define SET_BLUETOOTH_REG_CONF  cc2400_set(MANAND,  0x7fff); /*mega-reset of important signal values except VGA, see cc2400 datasheet, page 63*/ \
-														cc2400_set(LMTST,   0x2b22); /*current control, see cc2400 ds page 66 */ \
-														cc2400_set(MDMTST0, 0x334b); /*(set 0x134b for by now bits are not inverted prior the sending) */ 	\
-														cc2400_set(GRMDM,0x0101); /* unbuffered mode (otherwise set 0x801)*/ \
-														cc2400_set(FREND,   0x000f); /* max power activated!!*/ \
-														cc2400_set(MDMCTRL, 0x0029); /*modulation stuff */ \
-														cc2400_set(FSDIV,   channel ); /* 1 MHz IF */\
-														while (!(cc2400_status() & XOSC16M_STABLE));	cc2400_strobe(SFSON); \
-														while (!(cc2400_status() & FS_LOCK)); 	TXLED_SET; \
-														cc2400_strobe(STX); \
-														//#ifdef UBERTOOTH_ONE \
-																PAEN_SET; \
-														//#endif 
 
 /* count the number of 1 bits in a uint8_t */
 uint8_t count_asserted_bits(uint8_t n)
@@ -179,33 +109,6 @@ u8 rcv_baseband_pkt(u8* expected_access_code, u8* data, u16 data_len)
 		errors+=count_asserted_bits(expected_access_code[i]^access_code[i]);
 	if (errors<=MAX_SYNCWORD_ERRS) return 1;
 	return 0;
-}
-void send_baseband_pkt_old(u8* access_code,u8* data,u16 data_len)
-/*send a stream of byte in the 'access_code' physical channel*/
-{
-
-	u16 i=0;
-	cc2400_set(FSDIV,   channel); //working frequency
-	while (!(cc2400_status() & XOSC16M_STABLE));
-	cc2400_strobe(SFSON); //Activation of frequency synthesizer, from now on it is possibile to rx or tx
-	while (!(cc2400_status() & FS_LOCK));
-	TXLED_SET;
-#ifdef UBERTOOTH_ONE
-	PAEN_SET;
-#endif 
-	while ((cc2400_get(FSMSTATE) & 0x1f) != STATE_STROBE_FS_ON);
-			// transmit a packet
-	cc2400_set(FREND,0xf);
-	for (i=0;i<9;i++)
-		cc2400_set8(FIFOREG,access_code[i]);
-	for (i = 0; data!=NULL && i < data_len; i++)
-		cc2400_set8(FIFOREG, data[i]);
-	cc2400_strobe(STX);
-
-	//while ((cc2400_get(FSMSTATE) & 0x1f) != STATE_STROBE_FS_ON);
-	TXLED_CLR;
-	cc2400_strobe(SRFOFF); //Turned off the frequency synthesizer
-	while ((cc2400_status() & FS_LOCK));
 }
 void forge_fhs_pkt(u8 *fhs,u8 uap,u64 bd_addr,u8 *access_code)
 /*syncword mush has been calculated on bd_addr. bd_addr is the address of this (ubertooth) device.*/
