@@ -8,8 +8,8 @@
 
 #include"bt_utils.h"
 
-extern u16 channel;
-extern u32 clkn;
+extern volatile u16 channel;
+extern volatile u32 clkn;
 
 void bt_transmit(u8* access_code,u8* data,u16 data_len);
 /*send a stream of byte in the 'access_code' physical channel*/

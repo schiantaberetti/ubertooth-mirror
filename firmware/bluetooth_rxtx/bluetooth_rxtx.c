@@ -54,6 +54,7 @@
 #include "ubertooth_interface.h"
 #include "bluetooth.h"
 #include "bluetooth_le.h"
+#include "rxtx_utils.h"
 
 #define IAP_LOCATION 0x1FFF1FF1
 typedef void (*IAP)(u32[], u32[]);
@@ -301,61 +302,6 @@ void queue_init()
 	tail = 0;
 }
 
-static int enqueue_old(u8 *buf)
-{
-	int i;
-	u8 h = head & 0x7F;
-	u8 t = tail & 0x7F;
-	u8 n = (t + 1) & 0x7F;
-
-	usb_pkt_rx *f = &fifo[t];
-
-	/* fail if queue is full */
-	if (h == n) {
-		status |= FIFO_OVERFLOW;
-		return 0; 
-	}
-
-	f->clkn_high = (clkn >> 20) & 0xff;
-	if (hop_mode == HOP_BLUETOOTH)
-		f->clk100ns = clkn;
-	else
-		f->clk100ns = CLK100NS;
-	f->channel = channel-2402;
-	f->rssi_min = rssi_min;
-	f->rssi_max = rssi_max;
-	if (hop_mode != HOP_NONE)
-		f->rssi_avg = (int8_t)((rssi_iir[channel-2402] + 128)/256);
-	else
-		f->rssi_avg = (int8_t)((rssi_iir[0] + 128)/256);
-	f->rssi_count = rssi_count;
-
-	USRLED_SET;
-
-	// Unrolled copy of 50 bytes from buf to fifo
-	u32 *p1 = (u32 *)fifo[t].data;
-	u32 *p2 = (u32 *)buf;
-	p1[0] = p2[0];
-	p1[1] = p2[1];
-	p1[2] = p2[2];
-	p1[3] = p2[3];
-	p1[4] = p2[4];
-	p1[5] = p2[5];
-	p1[6] = p2[6];
-	p1[7] = p2[7];
-	p1[8] = p2[8];
-	p1[9] = p2[9];
-	p1[10] = p2[10];
-	p1[11] = p2[11];
-	*(u16 *)&(fifo[t].data[48]) = *(u16 *)&(buf[48]);
-
-	fifo[t].status = status;
-	status = 0;
-	++tail;
-
-	return 1;
-}
-
 static int enqueue(u8 *buf)
 {
 	int i;
@@ -375,11 +321,11 @@ static int enqueue(u8 *buf)
 	f->clkn_high = idle_buf_clkn_high;
 	f->clk100ns = idle_buf_clk100ns;
 
-	f->channel = idle_buf_channel - 2402;
+	f->channel = channel - 2402;//idle_buf_channel - 2402;
 	f->rssi_min = rssi_min;
 	f->rssi_max = rssi_max;
 	if (hop_mode != HOP_NONE)
-		f->rssi_avg = (int8_t)((rssi_iir[idle_buf_channel-2402] + 128)/256);
+		f->rssi_avg = (int8_t)((rssi_iir[channel-2402] +128)/256);//idle_buf_channel-2402] + 128)/256);
 	else
 		f->rssi_avg = (int8_t)((rssi_iir[0] + 128)/256);
 	f->rssi_count = rssi_count;
@@ -459,11 +405,11 @@ void send_usb_msg(char *msg)
 		usb_msg[i]='\0';
 	else
 		usb_msg[DMA_SIZE-1] = '\0';
-	enqueue_old(usb_msg);
+	enqueue(usb_msg);
 }
 void send_usb_value_msg(char *msg,u8 *data,u8 length)
 {
-	u8 i,j=0;
+	u8 i=0,j=0;
 	while(i<DMA_SIZE && msg[i]!='\0')
 	{
 		usb_msg[i] = msg[i] & 0xFF;
