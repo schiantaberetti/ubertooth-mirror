@@ -301,6 +301,61 @@ void queue_init()
 	tail = 0;
 }
 
+static int enqueue_old(u8 *buf)
+{
+	int i;
+	u8 h = head & 0x7F;
+	u8 t = tail & 0x7F;
+	u8 n = (t + 1) & 0x7F;
+
+	usb_pkt_rx *f = &fifo[t];
+
+	/* fail if queue is full */
+	if (h == n) {
+		status |= FIFO_OVERFLOW;
+		return 0; 
+	}
+
+	f->clkn_high = (clkn >> 20) & 0xff;
+	if (hop_mode == HOP_BLUETOOTH)
+		f->clk100ns = clkn;
+	else
+		f->clk100ns = CLK100NS;
+	f->channel = channel-2402;
+	f->rssi_min = rssi_min;
+	f->rssi_max = rssi_max;
+	if (hop_mode != HOP_NONE)
+		f->rssi_avg = (int8_t)((rssi_iir[channel-2402] + 128)/256);
+	else
+		f->rssi_avg = (int8_t)((rssi_iir[0] + 128)/256);
+	f->rssi_count = rssi_count;
+
+	USRLED_SET;
+
+	// Unrolled copy of 50 bytes from buf to fifo
+	u32 *p1 = (u32 *)fifo[t].data;
+	u32 *p2 = (u32 *)buf;
+	p1[0] = p2[0];
+	p1[1] = p2[1];
+	p1[2] = p2[2];
+	p1[3] = p2[3];
+	p1[4] = p2[4];
+	p1[5] = p2[5];
+	p1[6] = p2[6];
+	p1[7] = p2[7];
+	p1[8] = p2[8];
+	p1[9] = p2[9];
+	p1[10] = p2[10];
+	p1[11] = p2[11];
+	*(u16 *)&(fifo[t].data[48]) = *(u16 *)&(buf[48]);
+
+	fifo[t].status = status;
+	status = 0;
+	++tail;
+
+	return 1;
+}
+
 static int enqueue(u8 *buf)
 {
 	int i;
@@ -403,7 +458,7 @@ void send_usb_msg(char *msg)
 		usb_msg[i]='\0';
 	else
 		usb_msg[DMA_SIZE-1] = '\0';
-	enqueue(usb_msg);
+	enqueue_old(usb_msg);
 }
 void send_usb_value_msg(char *msg,u8 *data,u8 length)
 {
@@ -550,8 +605,11 @@ static BOOL usb_vendor_request_handler(TSetupPacket *pSetup, int *piLen, u8 **pp
 
 	case 100:
 		requested_mode = MODE_INQUIRY;
-		pbData[0] = 'R' & 0xFF; pbData[1] = '!' & 0xFF;  pbData[2] = '\0' & 0xFF;  
-		*piLen = 3;
+		pbData[0] = 'I' & 0xFF; pbData[1] = 'n' & 0xFF;  
+		pbData[2] = 'q' & 0xFF; pbData[3] = ' ' & 0xFF;  
+		pbData[4] = 'm' & 0xFF; pbData[5] = 'o' & 0xFF;  
+		pbData[6] = 'd' & 0xFF; pbData[7] = 'e' & 0xFF;  
+		pbData[8] = '\0' & 0xFF;  *piLen = 9;
 		break;
 
 	case UBERTOOTH_PING:
@@ -2350,6 +2408,7 @@ void led_specan()
 	mode = MODE_IDLE;
 }
 
+
 /*perform a bluetooth inquiry for the time of 'duration' seconds*/
 void inquiry_scan(u8 duration)
 {
@@ -2359,17 +2418,21 @@ void inquiry_scan(u8 duration)
 	u8 access_code[] = {0x54,0x75,0xc5,0x8c,0xc7,0x33,0x45,0xe7,0x2a}; //General Inquiry Access Code
 	forge_fhs_pkt(fhs_pkt,0,0x9E8B33,access_code); //UAP for the inquiry response pkt is DCI = 0x00
 
-	u8 rev_access_code[9],i;
+/*	u8 rev_access_code[9],i;
 	for(i=0;i<9;i++)
-		rev_access_code[i] = reverse_byte(access_code[8-i]);
+		rev_access_code[i] = reverse_byte(access_code[8-i]);*/
+
+	send_usb_msg("Hi there!");
+	//channel = 2402;
 	while(1)
 	{
 		if(do_hop)
 		{
-			hop();
+			//hop();
+			send_baseband_pkt(access_code,fhs_pkt,37);
+			send_usb_msg("FHS packet sent.");
 		}
-			send_baseband_pkt(rev_access_code,fhs_pkt,37);
-		handle_usb();
+			handle_usb();
 	}
 /*		FOLLOWING	A MEMENTO
 	queue_init();

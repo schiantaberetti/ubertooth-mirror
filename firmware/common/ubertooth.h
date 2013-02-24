@@ -199,6 +199,7 @@
 #define SCLK_CLR   (FIO2CLR = PIN_SCLK)
 #define MOSI_SET   (FIO2SET = PIN_MOSI)
 #define MOSI_CLR   (FIO2CLR = PIN_MOSI)
+#define GIO6       (FIO2PIN & PIN_GIO6)
 #define GIO6_SET   (FIO2SET = PIN_GIO6)
 #define GIO6_CLR   (FIO2CLR = PIN_GIO6)
 #define BTGR_SET   (FIO1SET = PIN_BTGR)
@@ -284,6 +285,7 @@
 extern uint32_t bootloader_ctrl;
 #define DFU_MODE 0x4305BB21
 
+void cc2400_spi_buf(u8 reg, u8 len, u8 *data);
 void wait(u8 seconds);
 void wait_ms(u32 ms);
 void wait_us(u32 us);

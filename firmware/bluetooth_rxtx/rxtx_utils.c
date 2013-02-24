@@ -3,6 +3,78 @@
 void send_baseband_pkt(u8* access_code,u8* data,u16 data_len)
 /*send a stream of byte in the 'access_code' physical channel*/
 {
+	u8 ac_buf[9];
+	u16 i;
+	u16 gio_save;
+	
+	for (i=0;i<9;i++)
+		//ac_buf[i] = reverse_byte(access_code[8-i]);
+		ac_buf[i] = access_code[i];
+
+	cc2400_set(MANAND, 0x7fff);
+	cc2400_set(LMTST, 0x2b22); // LNA and receive mixers test register
+	cc2400_set(MDMTST0, 0x134b); // no PRNG 	
+	
+	cc2400_set(GRMDM, 0x0c01);
+	// 0 00 01 1 000 00 0 00 0 1
+	//			|  | | 	 |	+--------> CRC off
+	// 			|  | | 	 +-----------> sync word: 8 MSB bits of SYNC_WORD
+	// 			|  | +---------------> 0 preamble bytes of 01010101
+	// 			|  +-----------------> packet mode
+	// 			+--------------------> buffered mode
+	cc2400_set(FSDIV, channel);
+	cc2400_set(FREND, 0b1011); // amplifier level (-7 dBm, picked from hat)
+	cc2400_set(MDMCTRL, 0x0040); // 250 kHz frequency deviation
+	cc2400_set(INT, 0x0014);	// FIFO_THRESHOLD: 20 bytes 	
+
+	// using the synch byte to send the first access code byte
+	i = ac_buf[0];
+	i <<= 8;
+	i |= ac_buf[0] & 0xff;
+	cc2400_set(SYNCH,   i);
+
+		// set GIO to FIFO_FULL
+	gio_save = cc2400_get(IOCFG);
+	cc2400_set(IOCFG, (GIO_FIFO_FULL << 9) | (gio_save & 0x1ff));
+
+	while (!(cc2400_status() & XOSC16M_STABLE));
+	cc2400_strobe(SFSON);
+	while (!(cc2400_status() & FS_LOCK));
+	TXLED_SET;
+#ifdef UBERTOOTH_ONE
+		PAEN_SET;
+#endif
+	while ((cc2400_get(FSMSTATE) & 0x1f) != STATE_STROBE_FS_ON);
+	cc2400_strobe(STX); 	
+
+	// put the remaining access code in the FIFO
+	while (GIO6); // wait for the FIFO to drain (FIFO_FULL false)
+	cc2400_spi_buf(FIFOREG, 8, ac_buf+1);
+
+	// put the packet data into the FIFO
+  for (i=0;i<data_len;i+=16)
+	{
+		while (GIO6); // wait for the FIFO to drain (FIFO_FULL false)
+		cc2400_spi_buf(FIFOREG, (data_len-i>16 ? 16 : data_len-i), data + i);
+	}	 
+
+	while ((cc2400_get(FSMSTATE) & 0x1f) != STATE_STROBE_FS_ON);
+	TXLED_CLR;
+
+	cc2400_strobe(SRFOFF);
+	while ((cc2400_status() & FS_LOCK));
+
+#ifdef UBERTOOTH_ONE
+	PAEN_CLR;
+#endif
+
+	// reset GIO
+	cc2400_set(IOCFG, gio_save);
+
+}
+void send_baseband_pkt_orig(u8* access_code,u8* data,u16 data_len)
+/*send a stream of byte in the 'access_code' physical channel*/
+{
 	cc2400_set(MANAND,  0x7fff);
 	cc2400_set(GRMDM,   0x0801); 
 	cc2400_set(LMTST,   0x2b22);
