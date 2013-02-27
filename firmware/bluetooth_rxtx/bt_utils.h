@@ -2,6 +2,17 @@
 #define _BT_UTILS_H_ 1
 #include"types.h"
 
+static const u64 sw_matrix[] = {
+	0xfe000002a0d1c014, 0x01000003f0b9201f, 0x008000033ae40edb, 0x004000035fca99b9,
+	0x002000036d5dd208, 0x00100001b6aee904, 0x00080000db577482, 0x000400006dabba41,
+	0x00020002f46d43f4, 0x000100017a36a1fa, 0x00008000bd1b50fd, 0x000040029c3536aa,
+	0x000020014e1a9b55, 0x0000100265b5d37e, 0x0000080132dae9bf, 0x000004025bd5ea0b,
+	0x00000203ef526bd1, 0x000001033511ab3c, 0x000000819a88d59e, 0x00000040cd446acf,
+	0x00000022a41aabb3, 0x0000001390b5cb0d, 0x0000000b0ae27b52, 0x0000000585713da9};
+
+void gen_access_code(u8 *access_code,u64 address);
+/*Generate the access code. The access_code array is required to have a size of at least 9 bytes. The access code computed is in the 'air' order (i.e. LSB to MSB).*/
+
 u8 reverse_byte(u8 byte);
 
 u16 compute_crc(u8 *data,u16 state,u8 nbits);

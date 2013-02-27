@@ -1,5 +1,36 @@
 #include"bt_utils.h"
 
+void gen_access_code(u8 *access_code,u64 address)
+/*Generate the access code. The access_code array is required to have a size of at least 9 bytes. The access code computed is in the 'air' order (i.e. LSB to MSB).*/
+{
+	u8 i;
+	/* default codeword modified for PN sequence and barker code */
+	u64 codeword = 0xb0000002c7820e7e;
+	
+	/* the sync word generated is in host order, not air order */ 
+	for (i = 0; i < 24; i++)
+		if (address & (0x800000 >> i))
+			codeword ^= sw_matrix[i];
+	
+	bit_copy(access_code,&codeword,0,0,64);
+	codeword = 0;
+	for(i=0;i<8;i++)
+		codeword ^= ((u64)reverse_byte(access_code[7-i])) << 8*(7-i) ;
+
+	access_code[0] = 0;
+	access_code[8] = 0;
+	bit_copy(access_code,&codeword,4,0,64);
+
+	if(access_code[0] & 0x8)
+		access_code[0] ^= 0xa0;
+	else
+		access_code[0] ^= 0x50;
+	if(access_code[8] & 0x10)
+		access_code[8] ^= 0x05;
+	else
+		access_code[8] ^= 0x0a;
+}
+
 u16 merge_pkt_parts(u8 *pkt,u8 *access_code,u8 *header, u8* payload,u16 load_bits)
 /*pkt must have a dimension of at least 72+54+load_bits bit.
 	Returns the number of byte over-written.
@@ -189,7 +220,11 @@ u8 bit_copy(u8 *dst,u64 *src,u16 dst_start,u16 src_start,u16 n_bits)
 	if((n_bits+src_start)>64) return 1;
 	if(padding) //devo catturare padding bit per riallinearmi
 	{	
-		mask = (0xFF>>((8-padding)+n_bits)) | (0xFF<<padding);		// mask for bits to be changed
+		if((8-padding+n_bits) < 8)
+			mask = (0xFF>>((8-padding)+n_bits));  
+		else
+			mask = 0;
+		mask |= (0xFF<<padding);		// mask for bits to be changed
 		dst[byte_index] &= mask; 
 		dst[byte_index] ^= (src_start + padding > 64) ? ((*src) << (padding-n_bits)) & ~mask : (((*src) >> (64-src_start-padding)))  & ~mask ;
 		byte_index++;

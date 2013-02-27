@@ -1,3 +1,10 @@
+# My executables
+test_bt_utils
+inquiry
+inq-jam
+bt-jam
+# GCC precompiled header
+*.gch
 # vim shit
 *.swp
 # host and firmware

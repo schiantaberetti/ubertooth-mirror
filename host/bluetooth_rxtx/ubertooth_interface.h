@@ -78,6 +78,9 @@ enum ubertooth_usb_commands {
     UBERTOOTH_BTLE_PROMISC    = 50,
     UBERTOOTH_SET_AFHMAP      = 51,
 	UBERTOOTH_CLEAR_AFHMAP    = 52,
+		UBERTOOTH_INQUIRY_SCAN = 100,
+		UBERTOOTH_INQ_JAM = 101,
+		UBERTOOTH_BT_JAM = 102,
 };
 
 enum modulations {
@@ -100,6 +103,7 @@ enum operating_modes {
 	MODE_BT_PROMISC_LE = 10,
 	MODE_RESET         = 11,
 	MODE_INQUIRY         = 12,
+	MODE_JAM = 13,
 };
 
 enum usb_pkt_types {

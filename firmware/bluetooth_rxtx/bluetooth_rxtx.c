@@ -550,13 +550,43 @@ static BOOL usb_vendor_request_handler(TSetupPacket *pSetup, int *piLen, u8 **pp
 
 	switch (pSetup->bRequest) {
 
-	case 100:
+	case UBERTOOTH_INQUIRY_SCAN:
 		requested_mode = MODE_INQUIRY;
 		pbData[0] = 'I' & 0xFF; pbData[1] = 'n' & 0xFF;  
 		pbData[2] = 'q' & 0xFF; pbData[3] = ' ' & 0xFF;  
 		pbData[4] = 'm' & 0xFF; pbData[5] = 'o' & 0xFF;  
 		pbData[6] = 'd' & 0xFF; pbData[7] = 'e' & 0xFF;  
 		pbData[8] = '\0' & 0xFF;  *piLen = 9;
+		break;
+
+	case UBERTOOTH_INQ_JAM:
+		requested_mode = MODE_JAM;
+		hop_mode = HOP_INQUIRY_SCAN;	
+		target.address = 0x0000009e8b33;
+		target.access_code = 0;
+		pbData[0] = 'I' & 0xFF; pbData[1] = 'n' & 0xFF;  
+		pbData[2] = 'q' & 0xFF; pbData[3] = ' ' & 0xFF;  
+		pbData[4] = 'j' & 0xFF; pbData[5] = 'a' & 0xFF;  
+		pbData[6] = 'm' & 0xFF; pbData[7] = '!' & 0xFF;  
+		pbData[8] = '\0' & 0xFF;  *piLen = 9;
+		precalc();
+		break;
+
+	case UBERTOOTH_BT_JAM:
+		clock_offset = 0;
+		for(i=0; i < 4; i++) {
+			clock_offset <<= 8;
+			clock_offset |= pbData[i];
+		}
+		clkn += clock_offset;
+		target.address = 0;
+		target.access_code = 0;
+		for(i=0; i < 6; i++) {
+			target.address |= pbData[i+4] << 8*i;
+		}
+		hop_mode = HOP_BLUETOOTH;
+		requested_mode = MODE_JAM;
+		precalc();
 		break;
 
 	case UBERTOOTH_PING:
@@ -924,7 +954,8 @@ static BOOL usb_vendor_request_handler(TSetupPacket *pSetup, int *piLen, u8 **pp
 			*piLen = sizeof(usb_pkt_rx);
 		} else {
 			pbData[0] = 0;
-			*piLen = 1;
+			pbData[2] = (channel) & 0xFF;
+			*piLen = 3;
 		}
 		break;
 
@@ -1023,6 +1054,10 @@ void TIMER0_IRQHandler()
 		/* BLUETOOTH -> 1600 Hz */
 		else if (hop_mode == HOP_BLUETOOTH) {
 			if ((next & 0x1) == 0)
+				do_hop = 1;
+		}
+		/* BLUETOOTH -> 3200 Hz */
+		else if (hop_mode == HOP_INQUIRY_SCAN) {
 				do_hop = 1;
 		}
 		/* BLUETOOTH Low Energy -> 7.5ms - 4.0s in multiples of 1.25 ms */
@@ -2452,6 +2487,25 @@ void inquiry_scan(u8 duration)
 */
 }
 
+void jamming()
+{
+	u8 access_code[] = {0x54,0x75,0xc5,0x8c,0xc7,0x33,0x45,0xe7,0x2a}; //General Inquiry Access Code
+	u8 fuzzy_data[200], i;
+	
+	for(i=0;i<200;i++)
+		fuzzy_data[i] = 0xaa;
+	
+	while(1)
+	{
+		//if(do_hop)
+		//{
+			hop();
+			bt_transmit(access_code,fuzzy_data,200);
+		//}
+		handle_usb();
+	}
+}
+
 int main()
 {
 	ubertooth_init();
@@ -2488,6 +2542,8 @@ int main()
 			cc2400_idle();
 		else if (requested_mode == MODE_INQUIRY && mode != MODE_INQUIRY)
 			inquiry_scan(1);
+		else if (requested_mode == MODE_JAM && mode != MODE_JAM)
+			jamming();
 
 		//FIXME do other modes like this
 	}
