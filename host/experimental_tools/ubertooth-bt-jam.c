@@ -19,61 +19,51 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/hci_lib.h>
-#include <sys/ioctl.h>
-
-#include <unistd.h>
-
 #include "ubertooth.h"
 #include <bluetooth_packet.h>
 #include <bluetooth_piconet.h>
 #include <getopt.h>
 
 extern int max_ac_errors;
-extern FILE *dumpfile;
 
 static void usage()
 {
-	printf("ubertooth-follow - active(bluez) CLK discovery and follow for a particular UAP/LAP\n");
+	printf("ubertooth-hop - passive CLK discovery for a particular UAP/LAP\n");
 	printf("Usage:\n");
 	printf("\t-h this help\n");
+	printf("\t-i filename\n");
 	printf("\t-l<LAP> (in hexadecimal)\n");
 	printf("\t-u<UAP> (in hexadecimal)\n");
 	printf("\t-U<0-7> set ubertooth device to use\n");
 	printf("\t-e max_ac_errors\n");
-	printf("\t-d filename\n");
-	printf("\t-a Enable AFH\n");
-	printf("\t-b Bluetooth device (hci0)\n");
-	printf("\t-w USB delay in 625us timeslots (default:5)\n");
-	printf("\nLAP and UAP are both required, if not given they are read from the local device, in some cases this may give the incorrect address.\n");
-//	printf("If an input file is not specified, an Ubertooth device is used for live capture.\n");
+	printf("\t-f follow piconet once clock is known\n");
+	printf("\nLAP and UAP are both required.\n");
+	printf("If an input file is not specified, an Ubertooth device is used for live capture.\n");
 }
 
 int main(int argc, char *argv[])
 {
-	int opt, sock, dev_id, i, delay = 5;
+	int opt;
 	int have_lap = 0;
 	int have_uap = 0;
-	int afh_enabled = 0;
-	uint8_t mode, afh_map[10];
+	int follow = 0;
 	char *end, ubertooth_device = -1;
-	char *bt_dev = "hci0";
-    char addr[19] = { 0 };
 	struct libusb_device_handle *devh = NULL;
-	uint32_t clock;
-	uint16_t accuracy, handle, offset;
-	bdaddr_t bdaddr;
+	FILE* infile = NULL;
 	piconet pn;
-	struct hci_dev_info di;
-	int cc = 0;
-
 
 	init_piconet(&pn);
 
-	while ((opt=getopt(argc,argv,"hl:u:U:e:d:ab:w:")) != EOF) {
+	while ((opt=getopt(argc,argv,"hi:l:u:U:e:f")) != EOF) {
 		switch(opt) {
+		case 'i':
+			infile = fopen(optarg, "r");
+			if (infile == NULL) {
+				printf("Could not open file %s\n", optarg);
+				usage();
+				return 1;
+			}
+			break;
 		case 'l':
 			pn.LAP = strtol(optarg, &end, 16);
 			if (end != optarg)
@@ -92,25 +82,8 @@ int main(int argc, char *argv[])
 		case 'e':
 			max_ac_errors = atoi(optarg);
 			break;
-		case 'd':
-			dumpfile = fopen(optarg, "w");
-			if (dumpfile == NULL) {
-				perror(optarg);
-				return 1;
-			}
-			break;
-		case 'a':
-			afh_enabled = 1;
-			break;
-		case 'b':
-			bt_dev = optarg;
-			if (bt_dev == NULL) {
-				perror(optarg);
-				return 1;
-			}
-			break;
-		case 'w': //wait
-			delay = atoi(optarg);
+		case 'f':
+			follow = 1;
 			break;
 		case 'h':
 		default:
@@ -118,84 +91,39 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 	}
-
-	dev_id = hci_devid(bt_dev);
-	sock = hci_open_dev(dev_id);
-	hci_read_clock(sock, 0, 0, &clock, &accuracy, 0);
-
 	if ((have_lap != 1) || (have_uap != 1)) {
-		printf("No address given, reading address from device\n");
-		hci_read_bd_addr(sock, &bdaddr, 0);
-		pn.LAP = bdaddr.b[0] | bdaddr.b[1] << 8 | bdaddr.b[2] << 16;
-		pn.UAP = bdaddr.b[3];
-		printf("LAP=%06x UAP=%02x\n", pn.LAP, pn.UAP);
-	} else {
-		if (have_lap && have_uap) {
-			printf("Address given, assuming address is remote\n");
-			sprintf(addr, "00:00:%02X:%02X:%02X:%02X",
-				pn.UAP,
-				(pn.LAP >> 16) & 0xFF,
-				(pn.LAP >> 8) & 0xFF,
-				pn.LAP & 0xFF
-			);
-			str2ba(addr, &bdaddr);
-			printf("Address: %s\n", addr);
-	
-			if (hci_devinfo(dev_id, &di) < 0) {
-				perror("Can't get device info");
-				exit(1);
-			}
-
-			if (hci_create_connection(sock, &bdaddr,
-						htobs(di.pkt_type & ACL_PTYPE_MASK),
-						0, 0x01, &handle, 25000) < 0) {
-				perror("Can't create connection");
-				exit(1);
-			}
-			sleep(1);
-			cc = 1;
-
-			if (hci_read_clock_offset(sock, handle, &offset, 1000) < 0) {
-				perror("Reading clock offset failed");
-			}
-			clock += offset;
-
-			//Experimental AFH map reading from remote device
-			if(afh_enabled) {
-				if(hci_read_afh_map(sock, handle, &mode, afh_map, 1000) < 0) {
-					perror("HCI read AFH map request failed");
-					//exit(1);
-				}
-				if(mode == 0x01) {
-					printf("\tAFH Map: 0x");
-					for(i=0; i<10; i++)
-						printf("%02x", afh_map[i]);
-					printf("\n");
-				} else {
-					printf("AFH disabled.\n");
-					afh_enabled = 0;
-				}
-			}
-			if (cc) {
-				usleep(10000);
-				hci_disconnect(sock, handle, HCI_OE_USER_ENDED_CONNECTION, 10000);
-			}
-			//exit(1);
-		} else {
-			usage();
-			exit(1);
-		}
-	}
-
-	devh = ubertooth_start(ubertooth_device);
-	if (devh == NULL) {
 		usage();
 		return 1;
 	}
-//	if(afh_enabled)
-//		cmd_set_afh_map(devh, afh_map);
-	rx_follow(devh, &pn, clock, delay);
-	ubertooth_stop(devh);
+
+	if (infile == NULL) {
+		devh = ubertooth_start(ubertooth_device);
+		if (devh == NULL) {
+			usage();
+			return 1;
+		}
+		rx_hop(devh, &pn, follow);
+		int r; 
+		u8 buf[80];
+		r = libusb_control_transfer(devh, CTRL_IN, 102, 0, 0,(unsigned char *)buf, 9, 1000); //activating jamming
+	printf("Ubertooth: %s\n",buf);
+	usb_pkt_rx usb_pkt;
+	while(1)
+	{
+		sleep(1);
+		r = cmd_poll(devh,&usb_pkt);
+		//r = cmd_ping(devh);
+		if(r>=0 && strncmp(usb_pkt.data,"N!",2)!=0)
+		{
+			printf("Received: %s\n",usb_pkt.data);
+			printf("Current channel: %d\n",usb_pkt.channel);
+		}
+	}
+		ubertooth_stop(devh);
+	} else {
+		rx_hop_file(infile, &pn);
+		fclose(infile);
+	}
 
 	return 0;
 }

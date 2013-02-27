@@ -573,20 +573,13 @@ static BOOL usb_vendor_request_handler(TSetupPacket *pSetup, int *piLen, u8 **pp
 		break;
 
 	case UBERTOOTH_BT_JAM:
-		clock_offset = 0;
-		for(i=0; i < 4; i++) {
-			clock_offset <<= 8;
-			clock_offset |= pbData[i];
-		}
-		clkn += clock_offset;
-		target.address = 0;
-		target.access_code = 0;
-		for(i=0; i < 6; i++) {
-			target.address |= pbData[i+4] << 8*i;
-		}
+		pbData[0] = 'b' & 0xFF; pbData[1] = 't' & 0xFF;  
+		pbData[2] = ' ' & 0xFF; pbData[3] = ' ' & 0xFF;  
+		pbData[4] = 'j' & 0xFF; pbData[5] = 'a' & 0xFF;  
+		pbData[6] = 'm' & 0xFF; pbData[7] = '!' & 0xFF;  
+		pbData[8] = '\0' & 0xFF;  *piLen = 9;
 		hop_mode = HOP_BLUETOOTH;
 		requested_mode = MODE_JAM;
-		precalc();
 		break;
 
 	case UBERTOOTH_PING:
@@ -2489,19 +2482,21 @@ void inquiry_scan(u8 duration)
 
 void jamming()
 {
-	u8 access_code[] = {0x54,0x75,0xc5,0x8c,0xc7,0x33,0x45,0xe7,0x2a}; //General Inquiry Access Code
+	u8 access_code[9];// = {0x54,0x75,0xc5,0x8c,0xc7,0x33,0x45,0xe7,0x2a}; //General Inquiry Access Code
 	u8 fuzzy_data[200], i;
-	
+		
+	mode = MODE_JAM;
 	for(i=0;i<200;i++)
-		fuzzy_data[i] = 0xaa;
+		fuzzy_data[i] = 0xa5;
 	
+	gen_access_code(access_code,target.address);
 	while(1)
 	{
-		//if(do_hop)
-		//{
+		if(do_hop)
+		{
 			hop();
-			bt_transmit(access_code,fuzzy_data,200);
-		//}
+			bt_transmit(access_code,fuzzy_data,80);
+		}
 		handle_usb();
 	}
 }
