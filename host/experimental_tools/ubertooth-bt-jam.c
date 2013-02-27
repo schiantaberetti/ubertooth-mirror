@@ -28,17 +28,14 @@ extern int max_ac_errors;
 
 static void usage()
 {
-	printf("ubertooth-hop - passive CLK discovery for a particular UAP/LAP\n");
+	printf("ubertooth-jam - passive CLK discovery for a particular UAP/LAP then jam on the physical channel\n");
 	printf("Usage:\n");
 	printf("\t-h this help\n");
-	printf("\t-i filename\n");
 	printf("\t-l<LAP> (in hexadecimal)\n");
 	printf("\t-u<UAP> (in hexadecimal)\n");
 	printf("\t-U<0-7> set ubertooth device to use\n");
 	printf("\t-e max_ac_errors\n");
-	printf("\t-f follow piconet once clock is known\n");
 	printf("\nLAP and UAP are both required.\n");
-	printf("If an input file is not specified, an Ubertooth device is used for live capture.\n");
 }
 
 int main(int argc, char *argv[])
@@ -51,19 +48,14 @@ int main(int argc, char *argv[])
 	struct libusb_device_handle *devh = NULL;
 	FILE* infile = NULL;
 	piconet pn;
+	int r; 
+	u8 buf[80];
+	usb_pkt_rx usb_pkt;
 
 	init_piconet(&pn);
 
-	while ((opt=getopt(argc,argv,"hi:l:u:U:e:f")) != EOF) {
+	while ((opt=getopt(argc,argv,"h:l:u:U:e")) != EOF) {
 		switch(opt) {
-		case 'i':
-			infile = fopen(optarg, "r");
-			if (infile == NULL) {
-				printf("Could not open file %s\n", optarg);
-				usage();
-				return 1;
-			}
-			break;
 		case 'l':
 			pn.LAP = strtol(optarg, &end, 16);
 			if (end != optarg)
@@ -82,9 +74,6 @@ int main(int argc, char *argv[])
 		case 'e':
 			max_ac_errors = atoi(optarg);
 			break;
-		case 'f':
-			follow = 1;
-			break;
 		case 'h':
 		default:
 			usage();
@@ -96,18 +85,15 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	if (infile == NULL) {
-		devh = ubertooth_start(ubertooth_device);
-		if (devh == NULL) {
-			usage();
-			return 1;
-		}
-		rx_hop(devh, &pn, follow);
-		int r; 
-		u8 buf[80];
-		r = libusb_control_transfer(devh, CTRL_IN, 102, 0, 0,(unsigned char *)buf, 9, 1000); //activating jamming
+	devh = ubertooth_start(ubertooth_device);
+	if (devh == NULL) {
+		usage();
+		return 1;
+	}
+	rx_hop(devh, &pn, follow);
+
+	r = libusb_control_transfer(devh, CTRL_IN, 102, 0, 0,(unsigned char *)buf, 9, 1000); //activating jamming
 	printf("Ubertooth: %s\n",buf);
-	usb_pkt_rx usb_pkt;
 	while(1)
 	{
 		sleep(1);
@@ -120,10 +106,6 @@ int main(int argc, char *argv[])
 		}
 	}
 		ubertooth_stop(devh);
-	} else {
-		rx_hop_file(infile, &pn);
-		fclose(infile);
-	}
 
 	return 0;
 }

@@ -573,11 +573,12 @@ static BOOL usb_vendor_request_handler(TSetupPacket *pSetup, int *piLen, u8 **pp
 		break;
 
 	case UBERTOOTH_BT_JAM:
-		pbData[0] = 'b' & 0xFF; pbData[1] = 't' & 0xFF;  
-		pbData[2] = ' ' & 0xFF; pbData[3] = ' ' & 0xFF;  
-		pbData[4] = 'j' & 0xFF; pbData[5] = 'a' & 0xFF;  
-		pbData[6] = 'm' & 0xFF; pbData[7] = '!' & 0xFF;  
-		pbData[8] = '\0' & 0xFF;  *piLen = 9;
+		pbData[0] = 'l' & 0xFF; pbData[1] = 'e' & 0xFF;  
+		pbData[2] = 't' & 0xFF; pbData[3] = '\'' & 0xFF;  
+		pbData[4] = 's' & 0xFF; pbData[5] = ' ' & 0xFF;  
+		pbData[6] = 'j' & 0xFF; pbData[7] = 'a' & 0xFF;  
+		pbData[8] = 'm' & 0xFF;  pbData[9] = '!' & 0xFF;  
+		pbData[10] = '\0' & 0xFF;  *piLen = 11;
 		hop_mode = HOP_BLUETOOTH;
 		requested_mode = MODE_JAM;
 		break;
